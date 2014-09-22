@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Documentation &mdash; Fauxton  documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Fauxton  documentation" href="index.html"/>
+        <link rel="prev" title="Building and Rendering a Scene" href="example_3.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> Fauxton</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">Rendering a Scene from a File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">Communication with Blender</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_3.html">Building and Rendering a Scene</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blender-interoperation">Blender Interoperation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scene-manipulation">Scene Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cameras">Cameras</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Fauxton</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>API Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="api-documentation">
+<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.BlenderError" title="fauxton.BlenderError"><tt class="xref py py-obj docutils literal"><span class="pre">BlenderError</span></tt></a></td>
+<td>An error that occurred executing code within Blender.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.BlenderModule" title="fauxton.BlenderModule"><tt class="xref py py-obj docutils literal"><span class="pre">BlenderModule</span></tt></a>(source)</td>
+<td>Custom Blender functionality accessible via remote procedure calling.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.BlenderResource" title="fauxton.BlenderResource"><tt class="xref py py-obj docutils literal"><span class="pre">BlenderResource</span></tt></a></td>
+<td>A resource on the Blender server.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.BlenderResourceType" title="fauxton.BlenderResourceType"><tt class="xref py py-obj docutils literal"><span class="pre">BlenderResourceType</span></tt></a></td>
+<td>A type providing an interface to Blender resources.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.enable_blender_gc" title="fauxton.enable_blender_gc"><tt class="xref py py-obj docutils literal"><span class="pre">enable_blender_gc</span></tt></a>()</td>
+<td>Allow the Blender server to automatically free unused resources.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.disable_blender_gc" title="fauxton.disable_blender_gc"><tt class="xref py py-obj docutils literal"><span class="pre">disable_blender_gc</span></tt></a>()</td>
+<td>Prevent the Blender server from automatically freeing unused resources.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.collect_blender_garbage" title="fauxton.collect_blender_garbage"><tt class="xref py py-obj docutils literal"><span class="pre">collect_blender_garbage</span></tt></a>()</td>
+<td>Manually free unused Blender resources.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.Prop" title="fauxton.Prop"><tt class="xref py py-obj docutils literal"><span class="pre">Prop</span></tt></a></td>
+<td>A graphical object that can be added to a scene.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.Scene" title="fauxton.Scene"><tt class="xref py py-obj docutils literal"><span class="pre">Scene</span></tt></a></td>
+<td>A collection of graphical objects.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.read_scene" title="fauxton.read_scene"><tt class="xref py py-obj docutils literal"><span class="pre">read_scene</span></tt></a>(path)</td>
+<td>Read a scene from a &#8221;.blend&#8221; file into memory.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.write_scene" title="fauxton.write_scene"><tt class="xref py py-obj docutils literal"><span class="pre">write_scene</span></tt></a>(path,&nbsp;scene)</td>
+<td>Write a scene in memory to a &#8221;.blend&#8221; file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.Camera" title="fauxton.Camera"><tt class="xref py py-obj docutils literal"><span class="pre">Camera</span></tt></a></td>
+<td>A prop that can take snapshots of its surroundings.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.DepthCamera" title="fauxton.DepthCamera"><tt class="xref py py-obj docutils literal"><span class="pre">DepthCamera</span></tt></a></td>
+<td>A camera that reports the depth at each pixel.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.SurfaceNormalCamera" title="fauxton.SurfaceNormalCamera"><tt class="xref py py-obj docutils literal"><span class="pre">SurfaceNormalCamera</span></tt></a></td>
+<td>A camera that reports the surface normal at each pixel.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.VelocityCamera" title="fauxton.VelocityCamera"><tt class="xref py py-obj docutils literal"><span class="pre">VelocityCamera</span></tt></a></td>
+<td>A camera that reports the velocity at each pixel.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="blender-interoperation">
+<h2>Blender Interoperation<a class="headerlink" href="#blender-interoperation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fauxton.BlenderError">
+<em class="property">class </em><tt class="descname">BlenderError</tt><a class="headerlink" href="#fauxton.BlenderError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error that occurred executing code within Blender.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.BlenderModule">
+<em class="property">class </em><tt class="descname">BlenderModule</tt><big>(</big><em>source</em><big>)</big><a class="headerlink" href="#fauxton.BlenderModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom Blender functionality accessible via remote procedure calling.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.BlenderResource">
+<em class="property">class </em><tt class="descname">BlenderResource</tt><a class="headerlink" href="#fauxton.BlenderResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>A resource on the Blender server.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.BlenderResourceType">
+<em class="property">class </em><tt class="descname">BlenderResourceType</tt><a class="headerlink" href="#fauxton.BlenderResourceType" title="Permalink to this definition">¶</a></dt>
+<dd><p>A type providing an interface to Blender resources.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fauxton.enable_blender_gc">
+<tt class="descname">enable_blender_gc</tt><big>(</big><big>)</big><a class="headerlink" href="#fauxton.enable_blender_gc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow the Blender server to automatically free unused resources.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fauxton.disable_blender_gc">
+<tt class="descname">disable_blender_gc</tt><big>(</big><big>)</big><a class="headerlink" href="#fauxton.disable_blender_gc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prevent the Blender server from automatically freeing unused resources.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fauxton.collect_blender_garbage">
+<tt class="descname">collect_blender_garbage</tt><big>(</big><big>)</big><a class="headerlink" href="#fauxton.collect_blender_garbage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually free unused Blender resources.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="scene-manipulation">
+<h2>Scene Manipulation<a class="headerlink" href="#scene-manipulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fauxton.Prop">
+<em class="property">class </em><tt class="descname">Prop</tt><a class="headerlink" href="#fauxton.Prop" title="Permalink to this definition">¶</a></dt>
+<dd><p>A graphical object that can be added to a scene.</p>
+<dl class="attribute">
+<dt id="fauxton.Prop.blender_type">
+<tt class="descname">blender_type</tt><em class="property"> = 'Object'</em><a class="headerlink" href="#fauxton.Prop.blender_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fauxton.Prop.position">
+<tt class="descname">position</tt><a class="headerlink" href="#fauxton.Prop.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>The prop&#8217;s spatial location.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fauxton.Prop.rotation">
+<tt class="descname">rotation</tt><a class="headerlink" href="#fauxton.Prop.rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The props&#8217;s rotation quaternion.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fauxton.Prop.pose">
+<tt class="descname">pose</tt><a class="headerlink" href="#fauxton.Prop.pose" title="Permalink to this definition">¶</a></dt>
+<dd><p>The prop&#8217;s position and rotation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.Scene">
+<em class="property">class </em><tt class="descname">Scene</tt><a class="headerlink" href="#fauxton.Scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of graphical objects.</p>
+<dl class="attribute">
+<dt id="fauxton.Scene.blender_type">
+<tt class="descname">blender_type</tt><em class="property"> = 'Scene'</em><a class="headerlink" href="#fauxton.Scene.blender_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fauxton.Scene.add">
+<tt class="descname">add</tt><big>(</big><em>prop</em><big>)</big><a class="headerlink" href="#fauxton.Scene.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a prop to the scene.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fauxton.Scene.remove">
+<tt class="descname">remove</tt><big>(</big><em>prop</em><big>)</big><a class="headerlink" href="#fauxton.Scene.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a prop from the scene.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="fauxton.read_scene">
+<tt class="descname">read_scene</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#fauxton.read_scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a scene from a &#8221;.blend&#8221; file into memory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fauxton.write_scene">
+<tt class="descname">write_scene</tt><big>(</big><em>path</em>, <em>scene</em><big>)</big><a class="headerlink" href="#fauxton.write_scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a scene in memory to a &#8221;.blend&#8221; file.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="cameras">
+<h2>Cameras<a class="headerlink" href="#cameras" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="fauxton.Camera">
+<em class="property">class </em><tt class="descname">Camera</tt><a class="headerlink" href="#fauxton.Camera" title="Permalink to this definition">¶</a></dt>
+<dd><p>A prop that can take snapshots of its surroundings.</p>
+<dl class="attribute">
+<dt id="fauxton.Camera.blender_type">
+<tt class="descname">blender_type</tt><em class="property"> = 'Object:CAMERA'</em><a class="headerlink" href="#fauxton.Camera.blender_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fauxton.Camera.render">
+<tt class="descname">render</tt><big>(</big><big>)</big><a class="headerlink" href="#fauxton.Camera.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a snapshot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fauxton.Camera.look_at">
+<tt class="descname">look_at</tt><big>(</big><em>target</em>, <em>roll=0</em><big>)</big><a class="headerlink" href="#fauxton.Camera.look_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient the camera towards a point in space.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fauxton.Camera.field_of_view">
+<tt class="descname">field_of_view</tt><a class="headerlink" href="#fauxton.Camera.field_of_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>The camera&#8217;s y and x viewing angles, in radians.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fauxton.Camera.resolution">
+<tt class="descname">resolution</tt><a class="headerlink" href="#fauxton.Camera.resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>The camera&#8217;s y and x resolution, in pixels.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fauxton.Camera.source">
+<tt class="descname">source</tt><a class="headerlink" href="#fauxton.Camera.source" title="Permalink to this definition">¶</a></dt>
+<dd><p>The OSL source to use as an emissive material when rendering.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.DepthCamera">
+<em class="property">class </em><tt class="descname">DepthCamera</tt><a class="headerlink" href="#fauxton.DepthCamera" title="Permalink to this definition">¶</a></dt>
+<dd><p>A camera that reports the depth at each pixel.</p>
+<dl class="attribute">
+<dt id="fauxton.DepthCamera.blender_type">
+<tt class="descname">blender_type</tt><em class="property"> = 'Object:CAMERA:fauxton._camera.DepthCamera'</em><a class="headerlink" href="#fauxton.DepthCamera.blender_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.SurfaceNormalCamera">
+<em class="property">class </em><tt class="descname">SurfaceNormalCamera</tt><a class="headerlink" href="#fauxton.SurfaceNormalCamera" title="Permalink to this definition">¶</a></dt>
+<dd><p>A camera that reports the surface normal at each pixel.</p>
+<dl class="attribute">
+<dt id="fauxton.SurfaceNormalCamera.blender_type">
+<tt class="descname">blender_type</tt><em class="property"> = 'Object:CAMERA:fauxton._camera.SurfaceNormalCamera'</em><a class="headerlink" href="#fauxton.SurfaceNormalCamera.blender_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.VelocityCamera">
+<em class="property">class </em><tt class="descname">VelocityCamera</tt><a class="headerlink" href="#fauxton.VelocityCamera" title="Permalink to this definition">¶</a></dt>
+<dd><p>A camera that reports the velocity at each pixel.</p>
+<dl class="attribute">
+<dt id="fauxton.VelocityCamera.blender_type">
+<tt class="descname">blender_type</tt><em class="property"> = 'Object:CAMERA:fauxton._camera.VelocityCamera'</em><a class="headerlink" href="#fauxton.VelocityCamera.blender_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="example_3.html" class="btn btn-neutral" title="Building and Rendering a Scene"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Mason McGill, 2014.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
