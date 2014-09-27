@@ -26,8 +26,9 @@ extensions = [
 add_module_names = False
 master_doc = 'index'
 source_suffix = '.rst'
-autodoc_default_flags = ['members', 'undoc-members']
+autodoc_default_flags = ['show-inheritance', 'members']
 autodoc_member_order = 'bysource'
+default_role = 'py:obj'
 
 #===============================================================================
 # HTML Options

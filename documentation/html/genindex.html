@@ -57,16 +57,25 @@
         
         
             <ul>
-<li class="toctree-l1"><a class="reference internal" href="example_1.html">Rendering a Scene from a File</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_2.html">Communication with Blender</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_3.html">Building and Rendering a Scene</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#blender-modules">Blender Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#blender-resources">Blender Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#customizing-blender-resource-marshalling">Customizing Blender Resource Marshalling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#garbage-collection">Garbage Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#scene-manipulation">Scene Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#rendering">Rendering</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#blender-interoperation">Blender Interoperation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#scene-manipulation">Scene Manipulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#cameras">Cameras</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">Example: Rendering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">Example: Blender Interoperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_3.html">Example: Scene Building</a></li>
 </ul>
 
         
@@ -108,7 +117,6 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
- | <a href="#F"><strong>F</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -131,32 +139,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api.html#fauxton.Camera.blender_type">blender_type (Camera attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api.html#fauxton.DepthCamera.blender_type">(DepthCamera attribute)</a>
-  </dt>
-
-        
-  <dt><a href="api.html#fauxton.Prop.blender_type">(Prop attribute)</a>
-  </dt>
-
-        
-  <dt><a href="api.html#fauxton.Scene.blender_type">(Scene attribute)</a>
-  </dt>
-
-        
-  <dt><a href="api.html#fauxton.SurfaceNormalCamera.blender_type">(SurfaceNormalCamera attribute)</a>
-  </dt>
-
-        
-  <dt><a href="api.html#fauxton.VelocityCamera.blender_type">(VelocityCamera attribute)</a>
-  </dt>
-
-      </dl></dd>
-      
   <dt><a href="api.html#fauxton.BlenderError">BlenderError (class in fauxton)</a>
   </dt>
 
@@ -168,10 +150,6 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#fauxton.BlenderResource">BlenderResource (class in fauxton)</a>
-  </dt>
-
-      
-  <dt><a href="api.html#fauxton.BlenderResourceType">BlenderResourceType (class in fauxton)</a>
   </dt>
 
   </dl></td>
@@ -219,16 +197,6 @@
   </dl></td>
 </tr></table>
 
-<h2 id="F">F</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="api.html#fauxton.Camera.field_of_view">field_of_view (Camera attribute)</a>
-  </dt>
-
-  </dl></td>
-</tr></table>
-
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
@@ -241,16 +209,6 @@
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="api.html#fauxton.Prop.pose">pose (Prop attribute)</a>
-  </dt>
-
-      
-  <dt><a href="api.html#fauxton.Prop.position">position (Prop attribute)</a>
-  </dt>
-
-  </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#fauxton.Prop">Prop (class in fauxton)</a>
@@ -270,18 +228,10 @@
   <dt><a href="api.html#fauxton.Scene.remove">remove() (Scene method)</a>
   </dt>
 
-      
-  <dt><a href="api.html#fauxton.Camera.render">render() (Camera method)</a>
-  </dt>
-
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api.html#fauxton.Camera.resolution">resolution (Camera attribute)</a>
-  </dt>
-
-      
-  <dt><a href="api.html#fauxton.Prop.rotation">rotation (Prop attribute)</a>
+  <dt><a href="api.html#fauxton.Camera.render">render() (Camera method)</a>
   </dt>
 
   </dl></td>
@@ -292,10 +242,6 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#fauxton.Scene">Scene (class in fauxton)</a>
-  </dt>
-
-      
-  <dt><a href="api.html#fauxton.Camera.source">source (Camera attribute)</a>
   </dt>
 
   </dl></td>

@@ -55,9 +55,9 @@ lamps = BlenderModule('''
   ''')
 
 class Lamp(BlenderResource):
-    blender_type = 'Lamp'
+    resource_type = 'Lamp'
     color = property(lamps.get_color, lamps.set_color)
-    __new__ = lambda t: lamps.create_lamp(t.blender_type)
+    __new__ = lambda t: lamps.create_lamp(t.resource_type)
 
 lamp = Lamp()
 assert(lamp.__class__ == Lamp)

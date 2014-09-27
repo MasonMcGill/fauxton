@@ -1,14 +1,10 @@
-Building and Rendering a Scene
-==============================
+Example: Scene Building
+=======================
 The following script constructs a scene from scratch and renders consecutive frames while moving the camera:
 
 ::
 
     #!/usr/bin/env python
-    from sys import path
-    from os.path import dirname, join
-    path.append(join(dirname(__file__), '..'))
-
     from numpy import cos, pi, sin
     from matplotlib.pyplot import axis, draw, imshow, show, title
     from fauxton import BlenderModule, Camera, Scene
@@ -71,3 +67,9 @@ The following script constructs a scene from scratch and renders consecutive fra
     for t in range(128):
         plot.set_data(render_frame(t))
         draw()
+
+**Output**:
+
+.. image:: example_3.png
+    :align: center
+    :scale: 75%

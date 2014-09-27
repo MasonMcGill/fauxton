@@ -8,9 +8,9 @@ from time import sleep
 from weakref import WeakKeyDictionary, WeakValueDictionary
 from xmlrpclib import ServerProxy
 
-__all__ = ['BlenderError', 'BlenderModule', 'BlenderResource',
-           'BlenderResourceType', 'enable_blender_gc', 'disable_blender_gc',
-           'collect_blender_garbage']
+__name__ = 'fauxton'
+__all__ = ['BlenderModule', 'BlenderError', 'BlenderResource',
+           'enable_blender_gc', 'disable_blender_gc', 'collect_blender_garbage']
 
 #===============================================================================
 # Private Symbols
@@ -95,14 +95,12 @@ gc_is_enabled = False
 active_resources = set()
 
 def get_id(resource):
-    def describe_class():
-        return ':'.join(t.__name__ for t in type(resource).mro()[-4::-1])
+    resource_types = [t.__name__ for t in type(resource).mro()[-4::-1]]
+    if isinstance(resource, bpy.types.Object):
+        resource_types.append(resource.type)
     if '__type__' in resource:
-        return resource['__type__'], resource.name
-    elif isinstance(resource, bpy.types.Object):
-        return describe_class() + ':' + resource.type, resource.name
-    else:
-        return describe_class(), resource.name
+        resource_types.append(resource['__type__'])
+    return ':'.join(resource_types), resource.name
 
 def reference(resource):
     resource_id = get_id(resource)
@@ -140,13 +138,13 @@ def enable_gc():
             sleep(GC_SLEEP_TIME)
     if not gc_is_enabled:
         gc_is_enabled = True
-        Thread(target=collect_continuously).run()
+        Thread(target=collect_continuously).start()
 
 def disable_gc():
     global gc_is_enabled
     gc_is_enabled = False
 
-#enable_gc()
+enable_gc()
 
 #===============================================================================
 # Provide support for user-defined modules.
@@ -244,12 +242,10 @@ def reference(resource):
 def dereference(resource_id):
     if resource_id in resources:
         return resources[resource_id]
-    type_name = resource_id[0]
-    while type_name and type_name not in resource_types:
-        type_name = type_name.rpartition(':')[0]
-    type_ = resource_types.get(type_name, BlenderResource)
+    type_names = resource_id[0].split(':')[::-1] + ['ID']
+    best_type_name = next(n for n in type_names if n in resource_types)
+    resource = object.__new__(resource_types[best_type_name])
     monitor = Monitor(lambda: server.release(resource_id))
-    resource = object.__new__(type_)
     resources[resource_id] = resource
     resource_ids[resource] = resource_id
     resource_monitors[resource] = monitor
@@ -279,14 +275,18 @@ def call(module_id, symbol, *arguments):
 # Public Symbols
 #===============================================================================
 
-class BlenderError(Exception):
-    'An error that occurred executing code within Blender.'
-    pass
-
 class BlenderModule(object):
-    'Custom Blender functionality accessible via remote procedure calling.'
+    '''
+    Custom Blender functionality accessible via remote procedure calling.
 
-    def __init__(self, source):
+    :param str source: Python code to be executed.
+
+    Operations defined on a `BlenderModule` `m`:
+        =============== ========================================================
+        `getattr(m, s)` Access the callable symbol `s` defined within `m`.
+        =============== ========================================================
+    '''
+    def __init__(self, source=''):
         self._id = server.add_module(source)
 
     def __del__(self):
@@ -294,35 +294,47 @@ class BlenderModule(object):
         except: pass
 
     def __getattr__(self, symbol):
+        '''
+        '''
         return lambda *x: call(self._id, symbol, *x)
 
-class BlenderResourceType(type):
-    'A type providing an interface to Blender resources.'
+class BlenderError(Exception):
+    '''
+    An error that occurred executing code within a `BlenderModule`.
 
-    def __new__(cls, name, bases, fields):
-        explicit_type = fields.pop('blender_type', '') or None
-        result = type.__new__(cls, name, bases, fields)
-        base_type = getattr(result, 'blender_type', '') or None
-        full_name = result.__module__ + '.' + name
-
-        if explicit_type or base_type:
-            result.blender_type = explicit_type or (base_type + ':' + full_name)
-            resource_types[result.blender_type] = result
-
-        return result
+    :param str message: Description of the error.
+    '''
+    def __init__(self, message=''):
+        Exception.__init__(self, message)
 
 class BlenderResource(object):
-    'A resource on the Blender server.'
-    __metaclass__ = BlenderResourceType
+    '''
+    A resource on the Blender server.
+    '''
+    resource_type = 'ID'
+
+    class __metaclass__(type):
+        def __new__(cls, name, bases, fields):
+            result = type.__new__(cls, name, bases, fields)
+            if 'resource_type' not in result.__dict__:
+                result.resource_type = result.__module__ + '.' + name
+            resource_types[result.resource_type] = result
+            return result
 
 def enable_blender_gc():
-    'Allow the Blender server to automatically free unused resources.'
+    '''
+    Allow the Blender server to automatically free unused resources.
+    '''
     server.enable_gc()
 
 def disable_blender_gc():
-    'Prevent the Blender server from automatically freeing unused resources.'
+    '''
+    Prevent the Blender server from automatically freeing unused resources.
+    '''
     server.disable_gc()
 
 def collect_blender_garbage():
-    'Manually free unused Blender resources.'
+    '''
+    Manually free unused Blender resources.
+    '''
     server.collect_garbage()

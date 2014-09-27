@@ -1,15 +1,16 @@
 .. currentmodule:: fauxton
 
-API Documentation
-=================
+API Reference
+=============
 
 Overview
 --------
 .. autosummary::
-    BlenderError
+    :nosignatures:
+
     BlenderModule
+    BlenderError
     BlenderResource
-    BlenderResourceType
     enable_blender_gc
     disable_blender_gc
     collect_blender_garbage
@@ -24,24 +25,23 @@ Overview
 
 Blender Interoperation
 ----------------------
-.. autoclass:: BlenderError
-.. autoclass:: BlenderModule
-.. autoclass:: BlenderResource
-.. autoclass:: BlenderResourceType
+.. autoclass:: BlenderModule(source='')
+.. autoclass:: BlenderError(message='')
+.. autoclass:: BlenderResource( )
 .. autofunction:: enable_blender_gc
 .. autofunction:: disable_blender_gc
 .. autofunction:: collect_blender_garbage
 
 Scene Manipulation
 ------------------
-.. autoclass:: Prop
-.. autoclass:: Scene
+.. autoclass:: Prop(data=None, **properties)
+.. autoclass:: Scene(**properties)
 .. autofunction:: read_scene
 .. autofunction:: write_scene
 
 Cameras
 -------
-.. autoclass:: Camera
-.. autoclass:: DepthCamera
-.. autoclass:: SurfaceNormalCamera
-.. autoclass:: VelocityCamera
+.. autoclass:: Camera(**properties)
+.. autoclass:: DepthCamera(**properties)
+.. autoclass:: SurfaceNormalCamera(**properties)
+.. autoclass:: VelocityCamera(**properties)

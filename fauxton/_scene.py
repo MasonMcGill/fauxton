@@ -1,6 +1,7 @@
 from numpy import array
 from _core import BlenderModule, BlenderResource
 
+__name__ = 'fauxton'
 __all__ = ['Prop', 'Scene', 'read_scene', 'write_scene']
 
 #===============================================================================
@@ -34,45 +35,44 @@ server = BlenderModule('''
         scene.world = bpy.data.worlds.new('')
         scene.world.horizon_color = (0, 0, 0)
         scene['__type__'] = type_
-        scene['prop_names'] = {}
-        scene['prop_keys'] = {}
+        scene['global_names'] = {}
+        scene['local_names'] = {}
         return scene
 
     def get_size(scene):
         return len(scene.objects)
 
     def prop_names(scene):
-        return scene['prop_names'].keys()
+        return scene['global_names'].names()
 
-    def contains(scene, key):
-        return key in scene['prop_names']
+    def contains(scene, name):
+        return name in scene['global_names']
 
-    def get_by_key(scene, key):
-        name = scene['prop_names'][key]
-        return scene.objects[name]
+    def get_by_name(scene, name):
+        return scene.objects[scene['global_names'][name]]
 
-    def set_by_key(scene, key, prop):
-        if contains(scene, key):
-            scene.objects.unlink(get_by_key(scene, key))
+    def set_by_name(scene, name, prop):
+        if contains(scene, name):
+            scene.objects.unlink(get_by_name(scene, name))
         scene.objects.link(prop)
-        scene['prop_names'][key] = prop.name
-        scene['prop_keys'][prop.name] = key
+        scene['global_names'][name] = prop.name
+        scene['local_names'][prop.name] = name
 
-    def remove_by_key(scene, key):
-        prop = get_by_key(scene, key)
+    def remove_by_name(scene, name):
+        prop = get_by_name(scene, name)
         scene.objects.unlink(prop)
-        del scene['prop_names'][key]
-        del scene['prop_keys'][prop.name]
+        del scene['global_names'][name]
+        del scene['local_names'][prop.name]
 
     def add(scene, prop):
-        def unused_key():
-            key = str(randint(0, 2*32))
-            return key if key not in scene['prop_names'] else unused_key()
-        set_by_key(scene, unused_key(), prop)
+        def unused_name():
+            name = str(randint(0, 2*32))
+            return name if name not in scene['global_names'] else unused_name()
+        set_by_name(scene, unused_name(), prop)
         return prop
 
     def remove(scene, prop):
-        remove_by_key(scene['prop_keys'][prop])
+        remove_by_key(scene['local_names'][prop])
         return prop
 
     def read_scene(path):
@@ -82,8 +82,8 @@ server = BlenderModule('''
             dst.objects = src.objects
         scene = dst.scenes[0]
         global_names = [o.name for o in dst.objects]
-        scene['prop_names'] = dict(zip(local_names, global_names))
-        scene['prop_keys'] = dict(zip(global_names, local_names))
+        scene['global_names'] = dict(zip(local_names, global_names))
+        scene['local_names'] = dict(zip(global_names, local_names))
         return scene
 
     def write_scene(path, scene):
@@ -95,17 +95,25 @@ server = BlenderModule('''
 #===============================================================================
 
 class Prop(BlenderResource):
-    'A graphical object that can be added to a scene.'
-    blender_type = 'Object'
+    '''
+    A graphical object that can be added to a scene.
+
+    :param BlenderResource data: Resource to wrap.
+    :param dict \**properties: Initial values of instance variables.
+
+    :var numpy.ndarray position: 3D spatial location.
+    :var numpy.ndarray rotation: 4D rotation quaternion.
+    :var tuple pose: `(position, rotation)`.
+    '''
+    resource_type = 'Object'
 
     def __new__(cls, data=None, **properties):
-        result = server.create_prop(cls.blender_type, data)
+        result = server.create_prop(cls.resource_type, data)
         [setattr(result, k, v) for k, v in properties.items()]
         return result
 
     @property
     def position(self):
-        'The prop\'s spatial location.'
         return array(server.get_position(self))
 
     @position.setter
@@ -114,7 +122,6 @@ class Prop(BlenderResource):
 
     @property
     def rotation(self):
-        'The props\'s rotation quaternion.'
         return array(server.get_rotation(self))
 
     @rotation.setter
@@ -123,7 +130,6 @@ class Prop(BlenderResource):
 
     @property
     def pose(self):
-        'The prop\'s position and rotation.'
         return self.position, self.rotation
 
     @pose.setter
@@ -131,44 +137,78 @@ class Prop(BlenderResource):
         self.position, self.rotation = pose
 
 class Scene(BlenderResource):
-    'A collection of graphical objects.'
-    blender_type = 'Scene'
+    '''
+    A collection of graphical objects.
+
+    :param dict \**properties: Initial values of instance variables.
+
+    Operations defined on a `Scene` `s`:
+        ========== =============================================================
+        `len(s)`   Return the number of props in `s`.
+        `iter(s)`  Return an iterator over the names of props in `s`.
+        `n in s`   Return whether a prop is stored in `s` under the name `n`.
+        `s[n]`     Return the prop stored in `s` under the name `n`.
+        `s[n] = p` Add the prop `p` to `s`, storing it under the name `n`.
+        `del s[n]` Remove the prop stored under the name `n` from `s`.
+        ========== =============================================================
+    '''
+    resource_type = 'Scene'
 
     def __new__(cls, **properties):
-        result = server.create_scene(cls.blender_type)
+        result = server.create_scene(cls.resource_type)
         [setattr(result, k, v) for k, v in properties.items()]
         return result
 
     def __len__(self):
         return server.get_size(self)
 
-    def __contains__(self, key):
-        return server.contains(self, key)
-
     def __iter__(self):
         return iter(server.prop_names(self))
 
-    def __getitem__(self, key):
-        return server.get_by_key(self, key)
+    def __contains__(self, name):
+        return server.contains(self, name)
 
-    def __setitem__(self, key, prop):
-        server.set_by_key(self, key, prop)
+    def __getitem__(self, name):
+        return server.get_by_name(self, name)
 
-    def __delitem__(self, key):
-        server.remove_by_key(self, key)
+    def __setitem__(self, name, prop):
+        server.set_by_name(self, name, prop)
+
+    def __delitem__(self, name):
+        server.remove_by_name(self, name)
 
     def add(self, prop):
-        'Add a prop to the scene.'
+        '''
+        Generate a name for a prop, add it to the scene, then return it.
+
+        :param Prop prop: Prop to add.
+        :rtype: Prop
+        '''
         return server.add(self, prop)
 
     def remove(self, prop):
-        'Remove a prop from the scene.'
+        '''
+        Remove a prop from the scene, then return it.
+
+        :param Prop prop: Prop to remove.
+        :rtype: Prop
+        '''
         return server.remove(self, prop)
 
 def read_scene(path):
-    'Read a scene from a ".blend" file into memory.'
+    '''
+    Read a scene from a ".blend" file into memory.
+
+    :param str path: Location on the filesystem.
+    :rtype: Scene
+    '''
     return server.read_scene(path)
 
 def write_scene(path, scene):
-    'Write a scene in memory to a ".blend" file.'
+    '''
+    Write a scene in memory to a ".blend" file.
+
+    :param str path: Location on the filesystem.
+    :param Scene scene: Scene to write.
+    '''
     return NotImplemented

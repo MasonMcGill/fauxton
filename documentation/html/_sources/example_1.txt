@@ -1,14 +1,11 @@
-Rendering a Scene from a File
-=============================
-The following script reads an existing scene from a ".blend" file and renders 3 versions of the same image: an optical image, a surface normal map, and a depth map:
+Example: Rendering
+==================
+The following script reads an existing scene from :download:`a ".blend" file <scene.blend>` and renders 3 versions of the same image: an optical image, a surface normal map, and a depth map:
 
 ::
 
     #!/usr/bin/env python
-    from sys import path
     from os.path import dirname, join
-    path.append(join(dirname(__file__), '..'))
-
     from matplotlib.pyplot import axis, imshow, show, subplot, title
     from fauxton import DepthCamera, SurfaceNormalCamera, read_scene
 
@@ -31,14 +28,19 @@ The following script reads an existing scene from a ".blend" file and renders 3 
     # Visualization
     #===============================================================================
 
-    def show_scaled(image, plot_name):
+    def show_normalized(image, plot_name):
         image -= image.min()
         image /= image.max()
         title(plot_name)
         axis('off')
         imshow(image)
 
-    subplot(1, 3, 1); show_scaled(optical_image, 'Optical Image')
-    subplot(1, 3, 2); show_scaled(normal_image, 'Surface Normals')
-    subplot(1, 3, 3); show_scaled(depth_image, 'Depth')
+    subplot(1, 3, 1); show_normalized(optical_image, 'Optical Image')
+    subplot(1, 3, 2); show_normalized(normal_image, 'Surface Normals')
+    subplot(1, 3, 3); show_normalized(depth_image, 'Depth')
     show()
+
+**Output**:
+
+.. image:: example_1.png
+    :align: center

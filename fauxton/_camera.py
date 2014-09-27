@@ -8,6 +8,7 @@ from numpy import (array, arccos, arctan2, cos, cross, dot, hstack, pi, sin,
 from _core import BlenderModule
 from _scene import Prop
 
+__name__ = 'fauxton'
 __all__ = ['Camera', 'DepthCamera', 'SurfaceNormalCamera', 'VelocityCamera']
 
 #===============================================================================
@@ -125,23 +126,64 @@ server = BlenderModule('''
 #===============================================================================
 
 class Camera(Prop):
-    'A prop that can take snapshots of its surroundings.'
-    blender_type = 'Object:CAMERA'
+    '''
+    A prop that can take snapshots of its surroundings.
+
+    :param dict \**properties: Initial values of instance variables.
+
+    :var numpy.ndarray field_of_view: *y* and *x* viewing angles, in radians.
+    :var numpy.ndarray resolution: *y* and *x* resolution, in pixels.
+    :var str source: OSL source to use as an emissive material when rendering.
+    '''
+    resource_type = 'CAMERA'
 
     def __new__(cls, **properties):
-        result = server.create_camera(cls.blender_type)
+        result = server.create_camera(cls.resource_type)
         [setattr(result, k, v) for k, v in properties.items()]
         return result
 
+    @property
+    def field_of_view(self):
+        return array(server.get_field_of_view(self))
+
+    @field_of_view.setter
+    def field_of_view(self, field_of_view):
+        server.set_field_of_view(self, list(map(float, field_of_view)))
+
+    @property
+    def resolution(self):
+        return array(server.get_resolution(self))
+
+    @resolution.setter
+    def resolution(self, resolution):
+        server.set_resolution(self, list(map(float, resolution)))
+
+    @property
+    def source(self):
+        return server.get_source(self)
+
+    @source.setter
+    def source(self, source):
+        server.set_source(self, source)
+
     def render(self):
-        'Take a snapshot.'
+        '''
+        Return a snapshot of the camera's containing scene.
+
+        :rtype: numpy.ndarray
+        '''
         path = server.render(self)
         image = imread(path, IMREAD_UNCHANGED)
         rmtree(dirname(path))
         return image
 
     def look_at(self, target, roll=0):
-        'Orient the camera towards a point in space.'
+        '''
+        Orient the camera towards a point in space.
+
+        :param numpy.ndarray target: 3D spatial location to look at.
+        :param float roll: Rotation around the gaze axis, in radians.
+        '''
         def norm(v):
             return sqrt(sum(square(v)))
 
@@ -168,35 +210,12 @@ class Camera(Prop):
         pivot = rotation(array((0, 0, -1)), pi/2 - arctan2(*eye[1::-1]) + roll)
         self.rotation = compose(look, pivot)
 
-    @property
-    def field_of_view(self):
-        'The camera\'s y and x viewing angles, in radians.'
-        return array(server.get_field_of_view(self))
-
-    @field_of_view.setter
-    def field_of_view(self, field_of_view):
-        server.set_field_of_view(self, list(map(float, field_of_view)))
-
-    @property
-    def resolution(self):
-        'The camera\'s y and x resolution, in pixels.'
-        return array(server.get_resolution(self))
-
-    @resolution.setter
-    def resolution(self, resolution):
-        server.set_resolution(self, list(map(float, resolution)))
-
-    @property
-    def source(self):
-        'The OSL source to use as an emissive material when rendering.'
-        return server.get_source(self)
-
-    @source.setter
-    def source(self, source):
-        server.set_source(self, source)
-
 class DepthCamera(Camera):
-    'A camera that reports the depth at each pixel.'
+    '''
+    A camera that reports the depth at each pixel.
+
+    :param dict \**properties: Initial values of instance variables.
+    '''
     def __new__(cls, **properties):
         return Camera.__new__(
             cls, source='''#include "stdosl.h"
@@ -207,7 +226,11 @@ class DepthCamera(Camera):
           )
 
 class SurfaceNormalCamera(Camera):
-    'A camera that reports the surface normal at each pixel.'
+    '''
+    A camera that reports the surface normal at each pixel.
+
+    :param dict \**properties: Initial values of instance variables.
+    '''
     def __new__(cls, **properties):
         return Camera.__new__(
             cls, source='''#include "stdosl.h"
@@ -218,7 +241,11 @@ class SurfaceNormalCamera(Camera):
           )
 
 class VelocityCamera(Camera):
-    'A camera that reports the velocity at each pixel.'
+    '''
+    A camera that reports the velocity at each pixel.
+
+    :param dict \**properties: Initial values of instance variables.
+    '''
     def __new__(cls, **properties):
         return Camera.__new__(
             cls, source='''#include "stdosl.h"

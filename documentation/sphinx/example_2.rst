@@ -1,14 +1,10 @@
-Communication with Blender
-==========================
+Example: Blender Interoperation
+===============================
 To enable scene manipulation and rendering, Fauxton runs an instance of Blender in a background process. The following script demonstrates communication with this Blender instance via remote procedure calling:
 
 ::
 
     #!/usr/bin/env python
-    from sys import path
-    from os.path import dirname, join
-    path.append(join(dirname(__file__), '..'))
-
     from fauxton import BlenderModule, BlenderResource
 
     #===============================================================================
@@ -20,7 +16,7 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
             return a + b
     ''')
 
-    assert(addition.add(3, 5) == 8)
+    assert addition.add(3, 5) == 8
 
     #===============================================================================
     # Working with Built-In Resource Types
@@ -38,10 +34,10 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
     ''')
 
     curve = curves.create_curve()
-    assert(curve.__class__ == BlenderResource)
+    assert curve.__class__ == BlenderResource
 
     curves.set_bevel_depth(curve, 3)
-    assert(curves.get_bevel_depth(curve) == 3)
+    assert curves.get_bevel_depth(curve) == 3
 
     #===============================================================================
     # Defining wrappers for Built-In Resource Types
@@ -66,10 +62,10 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
         __new__ = lambda t: lamps.create_lamp(t.blender_type)
 
     lamp = Lamp()
-    assert(lamp.__class__ == Lamp)
+    assert lamp.__class__ == Lamp
 
     lamp.color = [0, 0, 1]
-    assert(lamp.color == [0, 0, 1])
+    assert lamp.color == [0, 0, 1]
 
     #===============================================================================
     # Working with Custom Resource Types
@@ -92,7 +88,7 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
             return result
 
     lamp_storage.push(Lamp())
-    assert(lamp_storage.pop().__class__ == Lamp)
+    assert lamp_storage.pop().__class__ == Lamp
 
     lamp_storage.push(BlueLamp())
-    assert(lamp_storage.pop().__class__ == BlueLamp)
+    assert lamp_storage.pop().__class__ == BlueLamp

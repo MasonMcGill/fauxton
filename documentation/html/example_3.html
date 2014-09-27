@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Building and Rendering a Scene &mdash; Fauxton  documentation</title>
+  <title>Example: Scene Building &mdash; Fauxton  documentation</title>
   
 
   
@@ -29,8 +29,7 @@
 
   
     <link rel="top" title="Fauxton  documentation" href="index.html"/>
-        <link rel="next" title="API Documentation" href="api.html"/>
-        <link rel="prev" title="Communication with Blender" href="example_2.html"/> 
+        <link rel="prev" title="Example: Blender Interoperation" href="example_2.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -58,16 +57,25 @@
         
         
             <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="example_1.html">Rendering a Scene from a File</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_2.html">Communication with Blender</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Building and Rendering a Scene</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#blender-modules">Blender Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#blender-resources">Blender Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#customizing-blender-resource-marshalling">Customizing Blender Resource Marshalling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#garbage-collection">Garbage Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#scene-manipulation">Scene Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#rendering">Rendering</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#blender-interoperation">Blender Interoperation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#scene-manipulation">Scene Manipulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#cameras">Cameras</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">Example: Rendering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">Example: Blender Interoperation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Example: Scene Building</a></li>
 </ul>
 
         
@@ -91,7 +99,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Building and Rendering a Scene</li>
+    <li>Example: Scene Building</li>
       <li class="wy-breadcrumbs-aside">
         
           <a href="_sources/example_3.txt" rel="nofollow"> View page source</a>
@@ -102,14 +110,10 @@
 </div>
           <div role="main">
             
-  <div class="section" id="building-and-rendering-a-scene">
-<h1>Building and Rendering a Scene<a class="headerlink" href="#building-and-rendering-a-scene" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="example-scene-building">
+<h1>Example: Scene Building<a class="headerlink" href="#example-scene-building" title="Permalink to this headline">¶</a></h1>
 <p>The following script constructs a scene from scratch and renders consecutive frames while moving the camera:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">path</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span>
-<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
-
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sin</span>
 <span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">axis</span><span class="p">,</span> <span class="n">draw</span><span class="p">,</span> <span class="n">imshow</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">title</span>
 <span class="kn">from</span> <span class="nn">fauxton</span> <span class="kn">import</span> <span class="n">BlenderModule</span><span class="p">,</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">Scene</span>
@@ -174,6 +178,8 @@
     <span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
+<p><strong>Output</strong>:</p>
+<a class="reference internal image-reference" href="_images/example_3.png"><img alt="_images/example_3.png" class="align-center" src="_images/example_3.png" style="width: 368.25px; height: 383.25px;" /></a>
 </div>
 
 
@@ -182,10 +188,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="example_2.html" class="btn btn-neutral" title="Communication with Blender"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="example_2.html" class="btn btn-neutral" title="Example: Blender Interoperation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

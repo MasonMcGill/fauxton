@@ -1,10 +1,11 @@
 .. toctree::
     :hidden:
 
+    guide
+    api
     example_1
     example_2
     example_3
-    api
 
 Fauxton
 =======
@@ -33,10 +34,13 @@ Fauxton itself can be installed by copying the source files into your site-packa
     sudo mv master/fauxton-master/fauxton /usr/lib/python2.7/dist-packages
     rm -rf master.zip master
 
+Documentation
+-------------
+- :doc:`guide`
+- :doc:`api`
+
 Examples
 --------
-- :doc:`example_1`
-- :doc:`example_2`
-- :doc:`example_3`
-
-Click here to view the full :doc:`api`.
+- :doc:`Rendering <example_1>`
+- :doc:`Blender Interoperation <example_2>`
+- :doc:`Scene Building <example_3>`
