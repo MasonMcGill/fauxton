@@ -9,7 +9,7 @@ from _core import BlenderModule
 from _scene import Prop
 
 __name__ = 'fauxton'
-__all__ = ['Camera', 'DepthCamera', 'SurfaceNormalCamera', 'VelocityCamera']
+__all__ = ['Camera', 'DepthSensor', 'SurfaceNormalSensor', 'VelocitySensor']
 
 #===============================================================================
 # Private Symbols
@@ -210,7 +210,7 @@ class Camera(Prop):
         pivot = rotation(array((0, 0, -1)), pi/2 - arctan2(*eye[1::-1]) + roll)
         self.rotation = compose(look, pivot)
 
-class DepthCamera(Camera):
+class DepthSensor(Camera):
     '''
     A camera that reports the depth at each pixel.
 
@@ -225,7 +225,7 @@ class DepthCamera(Camera):
             }''', **properties
           )
 
-class SurfaceNormalCamera(Camera):
+class SurfaceNormalSensor(Camera):
     '''
     A camera that reports the surface normal at each pixel.
 
@@ -240,7 +240,7 @@ class SurfaceNormalCamera(Camera):
             }''', **properties
           )
 
-class VelocityCamera(Camera):
+class VelocitySensor(Camera):
     '''
     A camera that reports the velocity at each pixel.
 

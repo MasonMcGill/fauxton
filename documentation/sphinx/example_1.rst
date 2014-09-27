@@ -7,7 +7,7 @@ The following script reads an existing scene from :download:`a ".blend" file <sc
     #!/usr/bin/env python
     from os.path import dirname, join
     from matplotlib.pyplot import axis, imshow, show, subplot, title
-    from fauxton import DepthCamera, SurfaceNormalCamera, read_scene
+    from fauxton import DepthSensor, SurfaceNormalSensor, read_scene
 
     #===============================================================================
     # Rendering
@@ -16,13 +16,13 @@ The following script reads an existing scene from :download:`a ".blend" file <sc
     scene_path = join(dirname(__file__), 'scene.blend')
     scene = read_scene(scene_path)
 
-    optical_camera = scene['Camera']
-    normal_camera = scene.add(SurfaceNormalCamera(pose=optical_camera.pose))
-    depth_camera = scene.add(DepthCamera(pose=optical_camera.pose))
+    optical_sensor = scene['Camera']
+    normal_sensor = scene.add(SurfaceNormalSensor(pose=optical_sensor.pose))
+    depth_sensor = scene.add(DepthSensor(pose=optical_sensor.pose))
 
-    optical_image = optical_camera.render()
-    normal_image = normal_camera.render()
-    depth_image = depth_camera.render()
+    optical_image = optical_sensor.render()
+    normal_image = normal_sensor.render()
+    depth_image = depth_sensor.render()
 
     #===============================================================================
     # Visualization

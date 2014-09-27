@@ -19,9 +19,9 @@ Overview
     read_scene
     write_scene
     Camera
-    DepthCamera
-    SurfaceNormalCamera
-    VelocityCamera
+    DepthSensor
+    SurfaceNormalSensor
+    VelocitySensor
 
 Blender Interoperation
 ----------------------
@@ -42,6 +42,6 @@ Scene Manipulation
 Cameras
 -------
 .. autoclass:: Camera(**properties)
-.. autoclass:: DepthCamera(**properties)
-.. autoclass:: SurfaceNormalCamera(**properties)
-.. autoclass:: VelocityCamera(**properties)
+.. autoclass:: DepthSensor(**properties)
+.. autoclass:: SurfaceNormalSensor(**properties)
+.. autoclass:: VelocitySensor(**properties)

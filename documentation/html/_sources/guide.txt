@@ -103,4 +103,4 @@ A `Camera` is a `Prop` that can produce images of its containing scene. Every `C
 
 Every `Camera` has a `source` field that can be used to customize its rendering behavior. Specifically, if `source` is the source code of a valid OSL shader, the emissive material described by that shader will replace the material of every `Prop` is the scene during rendering. Custom OSL shaders can be useful to retrive information about a `Scene` that is not present in optical images (e.g. per-pixel depth, reflectivity, or velocity).
 
-For convenience, Fauxton provides `Camera` subclasses with a variety of default value for `source`: `DepthCamera`, `SurfaceNormalCamera`, and `VelocityCamera`.
+For convenience, Fauxton provides `Camera` subclasses with a variety of default value for `source`: `DepthSensor`, `SurfaceNormalSensor`, and `VelocitySensor`.
