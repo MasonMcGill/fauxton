@@ -32,7 +32,7 @@ curves = BlenderModule('''
   ''')
 
 curve = curves.create_curve()
-assert(curve.__class__ == BlenderResource)
+assert(type(curve) is BlenderResource)
 
 curves.set_bevel_depth(curve, 3)
 assert(curves.get_bevel_depth(curve) == 3)
@@ -60,7 +60,7 @@ class Lamp(BlenderResource):
     __new__ = lambda t: lamps.create_lamp(t.resource_type)
 
 lamp = Lamp()
-assert(lamp.__class__ == Lamp)
+assert(type(lamp) is Lamp)
 
 lamp.color = [0, 0, 1]
 assert(lamp.color == [0, 0, 1])
@@ -86,7 +86,7 @@ class BlueLamp(Lamp):
         return result
 
 lamp_storage.push(Lamp())
-assert(lamp_storage.pop().__class__ == Lamp)
+assert(type(lamp_storage.pop()) is Lamp)
 
 lamp_storage.push(BlueLamp())
-assert(lamp_storage.pop().__class__ == BlueLamp)
+assert(type(lamp_storage.pop()) is BlueLamp)
