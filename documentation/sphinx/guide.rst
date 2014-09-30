@@ -95,8 +95,6 @@ Props can also be added to or removed from a `Scene` without specifying a name, 
 
 A `Scene` can be read from a ".blend" file by calling `read_scene`. While the ".blend" format supports writing multiple scenes to the same file, `read_scene` only loads the first one into memory. A `Scene` can be written to a ".blend" file by calling `write_scene`.
 
-.. note:: Writing scenes is not yet implemented.
-
 Rendering
 ---------
 A `Camera` is a `Prop` that can produce images of its containing scene. Every `Camera` has a customizable `field_of_view` and `resolution`, and can `render` its view as a NumPy array.

@@ -43,13 +43,14 @@ server = BlenderModule('''
         return len(scene.objects)
 
     def prop_names(scene):
-        return scene['global_names'].names()
+        return scene['global_names'].keys()
 
     def contains(scene, name):
         return name in scene['global_names']
 
     def get_by_name(scene, name):
-        return scene.objects[scene['global_names'][name]]
+        global_name = scene['global_names'][name]
+        return bpy.data.objects[global_name]
 
     def set_by_name(scene, name, prop):
         if contains(scene, name):
@@ -87,8 +88,31 @@ server = BlenderModule('''
         return scene
 
     def write_scene(path, scene):
-        return NotImplemented
-''')
+        conflicting_scene = bpy.data.scenes.get('0', None)
+        if conflicting_scene: conflicting_scene.name = ''
+        old_scene_name = scene.name
+        scene.name = '0'
+
+        removed_objects = {}
+        for s in bpy.data.scenes[1:]:
+            removed_objects[s.name] = list(s.objects)
+            [s.objects.unlink(o) for o in s.objects]
+
+        old_object_names = {o: o.name for o in bpy.data.objects}
+        for global_name, local_name in scene['local_names'].items():
+            bpy.data.objects[global_name].name = local_name
+    
+        bpy.ops.wm.save_as_mainfile(filepath=path)
+        
+        for o, name in old_object_names.items():
+            o.name = name
+
+        for s in bpy.data.scenes[1:]:
+            [s.objects.link(o) for o in removed_objects[s.name]]
+    
+        if conflicting_scene: conflicting_scene.name = '0'
+        scene.name = old_scene_name
+  ''')        
 
 #===============================================================================
 # Public Symbols
@@ -211,4 +235,4 @@ def write_scene(path, scene):
     :param str path: Location on the filesystem.
     :param Scene scene: Scene to write.
     '''
-    return NotImplemented
+    server.write_scene(path, scene)

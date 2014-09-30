@@ -6,6 +6,7 @@
     example_1
     example_2
     example_3
+    example_4
 
 Fauxton
 =======
@@ -44,3 +45,4 @@ Examples
 - :doc:`Rendering <example_1>`
 - :doc:`Blender Interoperation <example_2>`
 - :doc:`Scene Building <example_3>`
+- :doc:`Serialization <example_4>`
