@@ -1,9 +1,11 @@
 from os.path import dirname
 from shutil import rmtree
 
-from cv2 import IMREAD_UNCHANGED, imread
-from numpy import (array, arccos, arctan2, cos, cross, dot, hstack, pi, sin,
-                   square, sqrt)
+try: from cv2 import IMREAD_UNCHANGED, imread
+except ImportError: imread = None
+
+from numpy import (array, arccos, arctan2, cos, cross, dot, hstack, load, pi,
+                   sin, square, sqrt)
 
 from _core import BlenderModule
 from _scene import Prop
@@ -18,6 +20,7 @@ __all__ = ['Camera', 'DepthSensor', 'SurfaceNormalSensor', 'VelocitySensor']
 server = BlenderModule('''
     from os.path import join
     from tempfile import mkdtemp
+    from numpy import array, reshape, save
 
     DEFAULT_RESOLUTION = (256, 256)
 
@@ -58,7 +61,7 @@ server = BlenderModule('''
         camera['__type__'] = type_
         return camera
 
-    def render(camera):
+    def render(camera, format):
         material_name = camera.get('material_name', None)
         resolution = camera.get('resolution', DEFAULT_RESOLUTION)
         scene = camera.users_scene[0]
@@ -84,6 +87,7 @@ server = BlenderModule('''
         scene.render.image_settings.file_format = 'OPEN_EXR'
         scene.render.resolution_y = 2 * resolution[0]
         scene.render.resolution_x = 2 * resolution[1]
+        scene.render.layers[0].use_pass_vector = True
         bpy.context.screen.scene = scene
         bpy.ops.render.render(write_still=True)
 
@@ -95,7 +99,15 @@ server = BlenderModule('''
                     obj.data.materials.clear()
                     for material in old_materials[obj.name]:
                         obj.data.materials.append(material)
-        return path
+
+        if format == 'exr':
+            return path
+        else:
+            image = bpy.data.images.load(path)
+            shape = (image.generated_height, image.generated_width, 4)
+            save(path[:-3] + 'npy', reshape(array(image.pixels[:], 'f'), shape))
+            bpy.data.images.remove(image)
+            return path[:-3] + 'npy'
 
     def get_field_of_view(camera):
         return [camera.data.angle_y, camera.data.angle_x]
@@ -172,8 +184,12 @@ class Camera(Prop):
 
         :rtype: numpy.ndarray
         '''
-        path = server.render(self)
-        image = imread(path, IMREAD_UNCHANGED)
+        if imread:
+            path = server.render(self, 'exr')
+            image = imread(path, IMREAD_UNCHANGED)[:, :, ::-1]
+        else:
+            path = server.render(self, 'npy')
+            image = load(path)
         rmtree(dirname(path))
         return image
 
