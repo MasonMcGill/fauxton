@@ -104,9 +104,9 @@ server = BlenderModule('''
             return path
         else:
             image = bpy.data.images.load(path)
-            shape = (image.generated_height, image.generated_width, 4)
+            shape = (image.size[0], image.size[1], 4)
             save(path[:-3] + 'npy', reshape(array(image.pixels[:], 'f'), shape))
-            bpy.data.images.remove(image)
+            image.user_clear(); bpy.data.images.remove(image)
             return path[:-3] + 'npy'
 
     def get_field_of_view(camera):
@@ -189,7 +189,7 @@ class Camera(Prop):
             image = imread(path, IMREAD_UNCHANGED)[:, :, ::-1]
         else:
             path = server.render(self, 'npy')
-            image = load(path)
+            image = load(path)[::-1, :, :]
         rmtree(dirname(path))
         return image
 
