@@ -64,6 +64,7 @@
 <li class="toctree-l2"><a class="reference internal" href="guide.html#customizing-blender-resource-marshalling">Customizing Blender Resource Marshalling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide.html#garbage-collection">Garbage Collection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide.html#scene-manipulation">Scene Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#animation">Animation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide.html#rendering">Rendering</a></li>
 </ul>
 </li>
@@ -284,18 +285,13 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>BlenderResource</em>) &#8211; Resource to wrap.</li>
-<li><strong>**properties</strong> (<em>dict</em>) &#8211; Initial values of instance variables.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>**properties</strong> (<em>dict</em>) &#8211; Initial values of instance variables.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>position</strong> (<em>numpy.ndarray</em>) &#8211; 3D spatial location.</li>
-<li><strong>rotation</strong> (<em>numpy.ndarray</em>) &#8211; 4D rotation quaternion.</li>
-<li><strong>scale</strong> (<em>numpy.ndarray</em>) &#8211; 3D scale&#8211;1 component for each object-space axis.</li>
-<li><strong>pose</strong> (<em>tuple</em>) &#8211; <tt class="xref py py-obj docutils literal"><span class="pre">(position,</span> <span class="pre">rotation,</span> <span class="pre">scale)</span></tt>.</li>
-<li><strong>action</strong> (<em>Action</em>) &#8211; Animation currently being performed.</li>
+<li><strong>position</strong> (<em>numpy.ndarray</em>) &#8211; Sequence of (t, x, y, z) keypoints.</li>
+<li><strong>rotation</strong> (<em>numpy.ndarray</em>) &#8211; Sequence of (t, w, x, y, z) keypoints.</li>
+<li><strong>scale</strong> (<em>numpy.ndarray</em>) &#8211; Sequence of (t, x, y, z) keypoints.</li>
 </ul>
 </td>
 </tr>
