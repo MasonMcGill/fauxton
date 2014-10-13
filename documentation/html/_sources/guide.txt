@@ -95,10 +95,23 @@ Props can also be added to or removed from a `Scene` without specifying a name, 
 
 A `Scene` can be read from a ".blend" file by calling `read_scene`. While the ".blend" format supports writing multiple scenes to the same file, `read_scene` only loads the first one into memory. A `Scene` can be written to a ".blend" file by calling `write_scene`.
 
+Animation
+---------
+A `Prop` can be animated by assigning it an `Action`: a keyframe-based specification of how its `position`, `rotation`, and `scale` should evolve over time. Keyframe points are specified as a sequence of `(t, x, y, z)` or `(t, w, x, y, z)` coordinates and interpolation is component-wise linear::
+
+    scene = Scene()
+    camera = scene.add(Camera(action=Action()))
+    position = [(0, 0, 0, 0), (24, 1, 1, 1)] # (0,0,0) -> (1,1,1) over 24 frames.
+    camera.action = Action(position=position)
+    scene.time = 12 # Move to (0.5, 0.5, 0.5).
+    scene.time = 18 # Move to (0.75, 0.75, 0.75).
+    scene.time = 24 # Move to (1, 1, 1).
+    scene.time = 30 # Stay at (1, 1, 1).
+
 Rendering
 ---------
 A `Camera` is a `Prop` that can produce images of its containing scene. Every `Camera` has a customizable `field_of_view` and `resolution`, and can `render` its view as a NumPy array.
 
-Every `Camera` has a `source` field that can be used to customize its rendering behavior. Specifically, if `source` is the source code of a valid OSL shader, the emissive material described by that shader will replace the material of every `Prop` is the scene during rendering. Custom OSL shaders can be useful to retrive information about a `Scene` that is not present in optical images (e.g. per-pixel depth, reflectivity, or velocity).
+Blender supports multiple render engines (`"BLENDER_RENDER"`, `"BLENDER_GAME"`, and `"CYCLES"`, by default). The engine a given `Camera` should use can be specified by assigning a value to its `render_engine` field. Every render engine has its own set of features and performance characteristics. Additionally, each render engine supports several `render passes <http://wiki.blender.org/index.php/Doc:2.6/Manual/Render/Post_Process/Passes>`_, all of which are valid targets for `Camera` rendering. A non-optical sensor--like a `DepthSensor`, `SurfaceNormalSensor`, or `VelocitySensor`--can be constructed from a `Camera` by specifying which `render_pass` it should use.
 
-For convenience, Fauxton provides `Camera` subclasses with a variety of default value for `source`: `DepthSensor`, `SurfaceNormalSensor`, and `VelocitySensor`.
+Every `Camera` also has a `source` field that can be used to further customize its rendering behavior. Specifically, if `source` is the source code of a valid OSL shader, the emissive material described by that shader will replace the material of every `Prop` in the scene during rendering. Using a custom OSL shader is a fine-grained alternative to specifying a `render_engine` and/or `render_pass`.
