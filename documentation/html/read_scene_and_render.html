@@ -29,7 +29,7 @@
 
   
     <link rel="top" title="Fauxton  documentation" href="index.html"/>
-        <link rel="next" title="Example: Blender Interoperation" href="example_2.html"/>
+        <link rel="next" title="Example: Blender Interoperation" href="communicate_with_blender.html"/>
         <link rel="prev" title="API Reference" href="api.html"/> 
 
   
@@ -75,8 +75,10 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Example: Rendering</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_2.html">Example: Blender Interoperation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_3.html">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicate_with_blender.html">Example: Blender Interoperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_scene_and_render.html">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_scene.html">Example: Serialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animate_scene.html">Example: Animation</a></li>
 </ul>
 
         
@@ -103,7 +105,7 @@
     <li>Example: Rendering</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/example_1.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/read_scene_and_render.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -117,6 +119,7 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span>
 <span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">axis</span><span class="p">,</span> <span class="n">imshow</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">subplot</span><span class="p">,</span> <span class="n">title</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">amax</span><span class="p">,</span> <span class="n">amin</span><span class="p">,</span> <span class="n">minimum</span>
 <span class="kn">from</span> <span class="nn">fauxton</span> <span class="kn">import</span> <span class="n">DepthSensor</span><span class="p">,</span> <span class="n">SurfaceNormalSensor</span><span class="p">,</span> <span class="n">read_scene</span>
 
 <span class="c">#===============================================================================</span>
@@ -138,21 +141,22 @@
 <span class="c"># Visualization</span>
 <span class="c">#===============================================================================</span>
 
-<span class="k">def</span> <span class="nf">show_normalized</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">plot_name</span><span class="p">):</span>
-    <span class="n">image</span> <span class="o">-=</span> <span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-    <span class="n">image</span> <span class="o">/=</span> <span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">show_scaled</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">plot_name</span><span class="p">):</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">minimum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">-=</span> <span class="n">amin</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">/=</span> <span class="n">amax</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
     <span class="n">title</span><span class="p">(</span><span class="n">plot_name</span><span class="p">)</span>
     <span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
     <span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
-<span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="n">show_normalized</span><span class="p">(</span><span class="n">optical_image</span><span class="p">,</span> <span class="s">&#39;Optical Image&#39;</span><span class="p">)</span>
-<span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="n">show_normalized</span><span class="p">(</span><span class="n">normal_image</span><span class="p">,</span> <span class="s">&#39;Surface Normals&#39;</span><span class="p">)</span>
-<span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="n">show_normalized</span><span class="p">(</span><span class="n">depth_image</span><span class="p">,</span> <span class="s">&#39;Depth&#39;</span><span class="p">)</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="n">show_scaled</span><span class="p">(</span><span class="n">optical_image</span><span class="p">,</span> <span class="s">&#39;Optical Image&#39;</span><span class="p">)</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="n">show_scaled</span><span class="p">(</span><span class="n">normal_image</span><span class="p">,</span> <span class="s">&#39;Surface Normals&#39;</span><span class="p">)</span>
+<span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="n">show_scaled</span><span class="p">(</span><span class="n">depth_image</span><span class="p">,</span> <span class="s">&#39;Depth&#39;</span><span class="p">)</span>
 <span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
-<img alt="_images/example_1.png" class="align-center" src="_images/example_1.png" />
+<img alt="_images/read_scene_and_render.png" class="align-center" src="_images/read_scene_and_render.png" />
 </div>
 
 
@@ -161,7 +165,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="example_2.html" class="btn btn-neutral float-right" title="Example: Blender Interoperation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="communicate_with_blender.html" class="btn btn-neutral float-right" title="Example: Blender Interoperation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="api.html" class="btn btn-neutral" title="API Reference"><span class="fa fa-arrow-circle-left"></span> Previous</a>

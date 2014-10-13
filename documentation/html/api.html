@@ -29,7 +29,7 @@
 
   
     <link rel="top" title="Fauxton  documentation" href="index.html"/>
-        <link rel="next" title="Example: Rendering" href="example_1.html"/>
+        <link rel="next" title="Example: Rendering" href="read_scene_and_render.html"/>
         <link rel="prev" title="User’s Guide" href="guide.html"/> 
 
   
@@ -74,9 +74,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#cameras">Cameras</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="example_1.html">Example: Rendering</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_2.html">Example: Blender Interoperation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_3.html">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_scene_and_render.html">Example: Rendering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicate_with_blender.html">Example: Blender Interoperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_scene_and_render.html">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_scene.html">Example: Serialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animate_scene.html">Example: Animation</a></li>
 </ul>
 
         
@@ -140,27 +142,30 @@
 <td>Manually free unused Blender resources.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#fauxton.Prop" title="fauxton.Prop"><tt class="xref py py-obj docutils literal"><span class="pre">Prop</span></tt></a></td>
-<td>A graphical object that can be added to a scene.</td>
+<td>A graphical object that can be added to a <tt class="docutils literal"><span class="pre">Scene</span></tt>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#fauxton.Scene" title="fauxton.Scene"><tt class="xref py py-obj docutils literal"><span class="pre">Scene</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.Action" title="fauxton.Action"><tt class="xref py py-obj docutils literal"><span class="pre">Action</span></tt></a></td>
+<td>A keyframe-based animation that can be applied to a <tt class="docutils literal"><span class="pre">Prop</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.Scene" title="fauxton.Scene"><tt class="xref py py-obj docutils literal"><span class="pre">Scene</span></tt></a></td>
 <td>A collection of graphical objects.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fauxton.read_scene" title="fauxton.read_scene"><tt class="xref py py-obj docutils literal"><span class="pre">read_scene</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.read_scene" title="fauxton.read_scene"><tt class="xref py py-obj docutils literal"><span class="pre">read_scene</span></tt></a></td>
 <td>Read a scene from a &#8221;.blend&#8221; file into memory.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#fauxton.write_scene" title="fauxton.write_scene"><tt class="xref py py-obj docutils literal"><span class="pre">write_scene</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.write_scene" title="fauxton.write_scene"><tt class="xref py py-obj docutils literal"><span class="pre">write_scene</span></tt></a></td>
 <td>Write a scene in memory to a &#8221;.blend&#8221; file.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fauxton.Camera" title="fauxton.Camera"><tt class="xref py py-obj docutils literal"><span class="pre">Camera</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.Camera" title="fauxton.Camera"><tt class="xref py py-obj docutils literal"><span class="pre">Camera</span></tt></a></td>
 <td>A prop that can take snapshots of its surroundings.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#fauxton.DepthSensor" title="fauxton.DepthSensor"><tt class="xref py py-obj docutils literal"><span class="pre">DepthSensor</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.DepthSensor" title="fauxton.DepthSensor"><tt class="xref py py-obj docutils literal"><span class="pre">DepthSensor</span></tt></a></td>
 <td>A camera that reports the depth at each pixel.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fauxton.SurfaceNormalSensor" title="fauxton.SurfaceNormalSensor"><tt class="xref py py-obj docutils literal"><span class="pre">SurfaceNormalSensor</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#fauxton.SurfaceNormalSensor" title="fauxton.SurfaceNormalSensor"><tt class="xref py py-obj docutils literal"><span class="pre">SurfaceNormalSensor</span></tt></a></td>
 <td>A camera that reports the surface normal at each pixel.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#fauxton.VelocitySensor" title="fauxton.VelocitySensor"><tt class="xref py py-obj docutils literal"><span class="pre">VelocitySensor</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#fauxton.VelocitySensor" title="fauxton.VelocitySensor"><tt class="xref py py-obj docutils literal"><span class="pre">VelocitySensor</span></tt></a></td>
 <td>A camera that reports the velocity at each pixel.</td>
 </tr>
 </tbody>
@@ -245,7 +250,7 @@
 <dt id="fauxton.Prop">
 <em class="property">class </em><tt class="descname">Prop</tt><big>(</big><em>data=None</em>, <em>**properties</em><big>)</big><a class="headerlink" href="#fauxton.Prop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fauxton.BlenderResource" title="fauxton.BlenderResource"><tt class="xref py py-class docutils literal"><span class="pre">fauxton.BlenderResource</span></tt></a></p>
-<p>A graphical object that can be added to a scene.</p>
+<p>A graphical object that can be added to a <tt class="docutils literal"><span class="pre">Scene</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -259,7 +264,37 @@
 <tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
 <li><strong>position</strong> (<em>numpy.ndarray</em>) &#8211; 3D spatial location.</li>
 <li><strong>rotation</strong> (<em>numpy.ndarray</em>) &#8211; 4D rotation quaternion.</li>
-<li><strong>pose</strong> (<em>tuple</em>) &#8211; <tt class="xref py py-obj docutils literal"><span class="pre">(position,</span> <span class="pre">rotation)</span></tt>.</li>
+<li><strong>scale</strong> (<em>numpy.ndarray</em>) &#8211; 3D scale&#8211;1 component for each object-space axis.</li>
+<li><strong>pose</strong> (<em>tuple</em>) &#8211; <tt class="xref py py-obj docutils literal"><span class="pre">(position,</span> <span class="pre">rotation,</span> <span class="pre">scale)</span></tt>.</li>
+<li><strong>action</strong> (<em>Action</em>) &#8211; Animation currently being performed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="fauxton.Action">
+<em class="property">class </em><tt class="descname">Action</tt><big>(</big><em>**properties</em><big>)</big><a class="headerlink" href="#fauxton.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fauxton.BlenderResource" title="fauxton.BlenderResource"><tt class="xref py py-class docutils literal"><span class="pre">fauxton.BlenderResource</span></tt></a></p>
+<p>A keyframe-based animation that can be applied to a <tt class="docutils literal"><span class="pre">Prop</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>BlenderResource</em>) &#8211; Resource to wrap.</li>
+<li><strong>**properties</strong> (<em>dict</em>) &#8211; Initial values of instance variables.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> (<em>numpy.ndarray</em>) &#8211; 3D spatial location.</li>
+<li><strong>rotation</strong> (<em>numpy.ndarray</em>) &#8211; 4D rotation quaternion.</li>
+<li><strong>scale</strong> (<em>numpy.ndarray</em>) &#8211; 3D scale&#8211;1 component for each object-space axis.</li>
+<li><strong>pose</strong> (<em>tuple</em>) &#8211; <tt class="xref py py-obj docutils literal"><span class="pre">(position,</span> <span class="pre">rotation,</span> <span class="pre">scale)</span></tt>.</li>
+<li><strong>action</strong> (<em>Action</em>) &#8211; Animation currently being performed.</li>
 </ul>
 </td>
 </tr>
@@ -397,6 +432,8 @@
 <li><strong>field_of_view</strong> (<em>numpy.ndarray</em>) &#8211; <em>y</em> and <em>x</em> viewing angles, in radians.</li>
 <li><strong>resolution</strong> (<em>numpy.ndarray</em>) &#8211; <em>y</em> and <em>x</em> resolution, in pixels.</li>
 <li><strong>source</strong> (<em>str</em>) &#8211; OSL source to use as an emissive material when rendering.</li>
+<li><strong>render_pass</strong> (<em>str</em>) &#8211; Blender render pass to use (e.g. &#8220;z&#8221; or &#8220;color&#8221;).</li>
+<li><strong>render_engine</strong> (<em>str</em>) &#8211; Blender render engine to use (e.g. &#8220;CYCLES&#8221;).</li>
 </ul>
 </td>
 </tr>
@@ -490,7 +527,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="example_1.html" class="btn btn-neutral float-right" title="Example: Rendering"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="read_scene_and_render.html" class="btn btn-neutral float-right" title="Example: Rendering"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="guide.html" class="btn btn-neutral" title="User’s Guide"><span class="fa fa-arrow-circle-left"></span> Previous</a>

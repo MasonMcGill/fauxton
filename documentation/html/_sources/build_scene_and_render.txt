@@ -6,7 +6,7 @@ The following script constructs a scene from scratch and renders consecutive fra
 
     #!/usr/bin/env python
     from numpy import cos, pi, sin
-    from matplotlib.pyplot import axis, draw, imshow, show, title
+    from matplotlib.pyplot import imshow
     from fauxton import BlenderModule, Camera, Scene
 
     #===============================================================================
@@ -23,8 +23,9 @@ The following script constructs a scene from scratch and renders consecutive fra
         def make_point_light(color):
             point_light = bpy.data.objects.new('', bpy.data.lamps.new('', 'POINT'))
             point_light.data.color = color
+	    point_light.data.energy = 0.75
             return point_light
-    ''')
+      ''')
 
     #===============================================================================
     # Scene Building
@@ -60,16 +61,16 @@ The following script constructs a scene from scratch and renders consecutive fra
     #===============================================================================
 
     plot = imshow([[0]])
-    title('Custom Scene')
-    axis('off')
-    show(block=False)
+    plot.axes.set_title('Custom Scene')
+    plot.axes.set_axis_off()
+    plot.figure.show()
 
-    for t in range(128):
+    for t in range(100):
         plot.set_data(render_frame(t))
-        draw()
+        plot.figure.canvas.draw()
 
 **Output**:
 
-.. image:: example_3.png
+.. image:: build_scene_and_render.png
     :align: center
     :scale: 75%

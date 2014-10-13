@@ -29,8 +29,8 @@
 
   
     <link rel="top" title="Fauxton  documentation" href="index.html"/>
-        <link rel="next" title="Example: Scene Building" href="example_3.html"/>
-        <link rel="prev" title="Example: Rendering" href="example_1.html"/> 
+        <link rel="next" title="Example: Scene Building" href="build_scene_and_render.html"/>
+        <link rel="prev" title="Example: Rendering" href="read_scene_and_render.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -74,9 +74,11 @@
 <li class="toctree-l2"><a class="reference internal" href="api.html#cameras">Cameras</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="example_1.html">Example: Rendering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_scene_and_render.html">Example: Rendering</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Example: Blender Interoperation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_3.html">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_scene_and_render.html">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_scene.html">Example: Serialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animate_scene.html">Example: Animation</a></li>
 </ul>
 
         
@@ -103,7 +105,7 @@
     <li>Example: Blender Interoperation</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/example_2.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/communicate_with_blender.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -123,8 +125,8 @@
 
 <span class="n">addition</span> <span class="o">=</span> <span class="n">BlenderModule</span><span class="p">(</span><span class="s">&#39;&#39;&#39;</span>
 <span class="s">    def add(a, b):</span>
-<span class="s">        return a + b</span>
-<span class="s">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s">    return a + b</span>
+<span class="s">  &#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">addition</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span>
 
@@ -134,17 +136,17 @@
 
 <span class="n">curves</span> <span class="o">=</span> <span class="n">BlenderModule</span><span class="p">(</span><span class="s">&#39;&#39;&#39;</span>
 <span class="s">    def create_curve():</span>
-<span class="s">        return bpy.data.curves.new(&#39;&#39;, &#39;CURVE&#39;)</span>
+<span class="s">    return bpy.data.curves.new(&#39;&#39;, &#39;CURVE&#39;)</span>
 
 <span class="s">    def set_bevel_depth(curve, depth):</span>
 <span class="s">        curve.bevel_depth = depth</span>
 
 <span class="s">    def get_bevel_depth(curve):</span>
 <span class="s">        return curve.bevel_depth</span>
-<span class="s">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s">  &#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="n">curve</span> <span class="o">=</span> <span class="n">curves</span><span class="o">.</span><span class="n">create_curve</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">curve</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">BlenderResource</span>
+<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span> <span class="ow">is</span> <span class="n">BlenderResource</span>
 
 <span class="n">curves</span><span class="o">.</span><span class="n">set_bevel_depth</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">curves</span><span class="o">.</span><span class="n">get_bevel_depth</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
@@ -164,15 +166,15 @@
 
 <span class="s">    def get_color(lamp):</span>
 <span class="s">        return list(lamp.color)</span>
-<span class="s">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s">  &#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Lamp</span><span class="p">(</span><span class="n">BlenderResource</span><span class="p">):</span>
-    <span class="n">blender_type</span> <span class="o">=</span> <span class="s">&#39;Lamp&#39;</span>
+    <span class="n">resource_type</span> <span class="o">=</span> <span class="s">&#39;Lamp&#39;</span>
     <span class="n">color</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">lamps</span><span class="o">.</span><span class="n">get_color</span><span class="p">,</span> <span class="n">lamps</span><span class="o">.</span><span class="n">set_color</span><span class="p">)</span>
-    <span class="n">__new__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">lamps</span><span class="o">.</span><span class="n">create_lamp</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">blender_type</span><span class="p">)</span>
+    <span class="n">__new__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">lamps</span><span class="o">.</span><span class="n">create_lamp</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">resource_type</span><span class="p">)</span>
 
 <span class="n">lamp</span> <span class="o">=</span> <span class="n">Lamp</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">lamp</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">Lamp</span>
+<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">lamp</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Lamp</span>
 
 <span class="n">lamp</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="k">assert</span> <span class="n">lamp</span><span class="o">.</span><span class="n">color</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -189,7 +191,7 @@
 
 <span class="s">    def pop():</span>
 <span class="s">        return lamps.pop()</span>
-<span class="s">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s">  &#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">BlueLamp</span><span class="p">(</span><span class="n">Lamp</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
@@ -198,10 +200,10 @@
         <span class="k">return</span> <span class="n">result</span>
 
 <span class="n">lamp_storage</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">Lamp</span><span class="p">())</span>
-<span class="k">assert</span> <span class="n">lamp_storage</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">Lamp</span>
+<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">lamp_storage</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span> <span class="ow">is</span> <span class="n">Lamp</span>
 
 <span class="n">lamp_storage</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">BlueLamp</span><span class="p">())</span>
-<span class="k">assert</span> <span class="n">lamp_storage</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">BlueLamp</span>
+<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">lamp_storage</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span> <span class="ow">is</span> <span class="n">BlueLamp</span>
 </pre></div>
 </div>
 </div>
@@ -212,10 +214,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="example_3.html" class="btn btn-neutral float-right" title="Example: Scene Building"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="build_scene_and_render.html" class="btn btn-neutral float-right" title="Example: Scene Building"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="example_1.html" class="btn btn-neutral" title="Example: Rendering"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="read_scene_and_render.html" class="btn btn-neutral" title="Example: Rendering"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

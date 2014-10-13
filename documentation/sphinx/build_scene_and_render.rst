@@ -23,8 +23,9 @@ The following script constructs a scene from scratch and renders consecutive fra
         def make_point_light(color):
             point_light = bpy.data.objects.new('', bpy.data.lamps.new('', 'POINT'))
             point_light.data.color = color
+	    point_light.data.energy = 0.75
             return point_light
-    ''')
+      ''')
 
     #===============================================================================
     # Scene Building

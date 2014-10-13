@@ -17,7 +17,8 @@ __all__ = ['Camera', 'DepthSensor', 'SurfaceNormalSensor', 'VelocitySensor']
 # Private Symbols
 #===============================================================================
 
-server = BlenderModule('''
+bl_camera = BlenderModule('''
+    from contextlib import contextmanager
     from os.path import join
     from tempfile import mkdtemp
     from numpy import array, reshape, save
@@ -56,58 +57,75 @@ server = BlenderModule('''
             materials[source] = create_material(source)
         return materials[source].name
 
-    def create_camera(type_):
-        camera = bpy.data.objects.new('', bpy.data.cameras.new(''))
-        camera['__type__'] = type_
-        return camera
-
-    def render(camera, format):
-        material_name = camera.get('material_name', None)
-        resolution = camera.get('resolution', DEFAULT_RESOLUTION)
-        scene = camera.users_scene[0]
-
+    @contextmanager
+    def use_material(scene, material_name):
         if material_name is not None:
-            old_render_engine = scene.render.engine
-            scene.render.engine = 'CYCLES'
             old_horizon_color = scene.world.horizon_color
+            scene.render.engine = 'CYCLES'
             scene.world.horizon_color = (0, 0, 0)
-            old_materials = {}
             new_material = bpy.data.materials[material_name]
-            for obj in bpy.data.objects:
+            old_materials = {}
+            for obj in scene.objects:
                 if hasattr(obj.data, 'materials'):
                     old_materials[obj.name] = list(obj.data.materials)
                     obj.data.materials.clear()
                     obj.data.materials.append(new_material)
-
-        try: path = join(mkdtemp(dir='/dev/shm'), 'image.exr')
-        except: path = join(mkdtemp(), 'image.exr')
-
-        scene.camera = camera
-        scene.render.filepath = path
-        scene.render.image_settings.file_format = 'OPEN_EXR'
-        scene.render.resolution_y = 2 * resolution[0]
-        scene.render.resolution_x = 2 * resolution[1]
-        scene.render.layers[0].use_pass_vector = True
-        bpy.context.screen.scene = scene
-        bpy.ops.render.render(write_still=True)
-
+        yield
         if material_name is not None:
-            scene.render.engine = old_render_engine
             scene.world.horizon_color = old_horizon_color
-            for obj in bpy.data.objects:
-                if obj.name in old_materials:
+            for obj in scene.objects:
+                if hasattr(obj.data, 'materials'):
                     obj.data.materials.clear()
                     for material in old_materials[obj.name]:
                         obj.data.materials.append(material)
 
-        if format == 'exr':
-            return path
-        else:
-            image = bpy.data.images.load(path)
-            shape = (image.size[0], image.size[1], 4)
-            save(path[:-3] + 'npy', reshape(array(image.pixels[:], 'f'), shape))
-            image.user_clear(); bpy.data.images.remove(image)
-            return path[:-3] + 'npy'
+    def save_links(links):
+        src = lambda l: (l.from_node, l.from_socket.name)
+        snk = lambda l: (l.to_node, l.to_socket.name)
+        return [src(l) + snk(l) for l in links]
+
+    def load_links(links, link_info):
+        for src_n, src_s, snk_n, snk_s in link_info:
+            src = src_n.outputs[src_s]
+            snk = snk_n.inputs[snk_s]
+            links.new(src, snk)
+
+    @contextmanager
+    def use_render_pass(scene, render_pass_name):
+        if render_pass_name is not None:
+            layer = scene.render.layers[0]
+            nodes = scene.node_tree.nodes
+            links = scene.node_tree.links
+            passes = [a for a in dir(layer) if a.startswith('use_pass_')]
+            scene_enabled_passes = [p for p in passes if getattr(layer, p)]
+            scene_node_links = save_links(links)
+            scene_use_nodes = scene.use_nodes
+
+            for p in passes: setattr(layer, p, False)
+            setattr(layer, 'use_pass_' + render_pass_name, True)
+            scene.use_nodes = True
+            links.clear()
+            is_composite = lambda n: n.bl_idname == 'CompositorNodeComposite'
+            src_node = nodes.new('CompositorNodeRLayers')
+            snk_node = next(filter(is_composite, nodes), None)
+            snk_node = snk_node or nodes.new('CompositorNodeComposite')
+            src_socket = next(s for s in src_node.outputs if s.enabled)
+            snk_socket = snk_node.inputs['Image']
+            links.new(src_socket, snk_socket)
+
+        yield
+
+        if render_pass_name is not None:
+            nodes.remove(src_node)
+            setattr(layer, 'use_pass_' + render_pass_name, False)
+            for p in scene_enabled_passes: setattr(layer, p, True)
+            load_links(links, scene_node_links)
+            scene.use_nodes = scene_use_nodes
+
+    def create(type_):
+        camera = bpy.data.objects.new('', bpy.data.cameras.new(''))
+        camera['__type__'] = type_
+        return camera
 
     def get_field_of_view(camera):
         return [camera.data.angle_y, camera.data.angle_x]
@@ -131,6 +149,45 @@ server = BlenderModule('''
         if source is not None:
             camera['source'] = source
             camera['material_name'] = get_material_name(source)
+
+    def get_render_pass(camera):
+        return camera.get('render_pass', None)
+
+    def set_render_pass(camera, render_pass):
+        camera['render_pass'] = render_pass
+
+    def get_render_engine(camera):
+        return camera.get('render_engine', 'BLENDER_RENDER')
+
+    def set_render_engine(camera, render_engine):
+        camera['render_engine'] = render_engine
+
+    def render(camera, format):
+        try: path = join(mkdtemp(dir='/dev/shm'), 'image.exr')
+        except: path = join(mkdtemp(), 'image.exr')
+
+        scene = camera.users_scene[0]
+        scene.camera = camera
+        scene.render.filepath = path
+        scene.render.image_settings.file_format = 'OPEN_EXR'
+        scene.render.engine = get_render_engine(camera)
+        scene.render.layers['RenderLayer'].use_pass_vector = True
+        scene.render.resolution_y = 2 * get_resolution(camera)[0]
+        scene.render.resolution_x = 2 * get_resolution(camera)[1]
+        bpy.context.screen.scene = scene
+
+        with use_material(scene, camera.get('material_name', None)):
+            with use_render_pass(scene, get_render_pass(camera)):
+                bpy.ops.render.render(write_still=True)
+
+        if format == 'exr':
+            return path
+        else:
+            image = bpy.data.images.load(path)
+            shape = (image.size[0], image.size[1], 4)
+            save(path[:-3] + 'npy', reshape(array(image.pixels[:], 'f'), shape))
+            image.user_clear(); bpy.data.images.remove(image)
+            return path[:-3] + 'npy'
   ''')
 
 #===============================================================================
@@ -146,37 +203,55 @@ class Camera(Prop):
     :var numpy.ndarray field_of_view: *y* and *x* viewing angles, in radians.
     :var numpy.ndarray resolution: *y* and *x* resolution, in pixels.
     :var str source: OSL source to use as an emissive material when rendering.
+    :var str render_pass: Blender render pass to use (e.g. "z" or "color").
+    :var str render_engine: Blender render engine to use (e.g. "CYCLES").
     '''
     resource_type = 'CAMERA'
 
     def __new__(cls, **properties):
-        result = server.create_camera(cls.resource_type)
+        result = bl_camera.create(cls.resource_type)
         [setattr(result, k, v) for k, v in properties.items()]
         return result
 
     @property
     def field_of_view(self):
-        return array(server.get_field_of_view(self))
+        return array(bl_camera.get_field_of_view(self))
 
     @field_of_view.setter
     def field_of_view(self, field_of_view):
-        server.set_field_of_view(self, list(map(float, field_of_view)))
+        bl_camera.set_field_of_view(self, list(map(float, field_of_view)))
 
     @property
     def resolution(self):
-        return array(server.get_resolution(self))
+        return array(bl_camera.get_resolution(self))
 
     @resolution.setter
     def resolution(self, resolution):
-        server.set_resolution(self, list(map(float, resolution)))
+        bl_camera.set_resolution(self, list(map(float, resolution)))
 
     @property
     def source(self):
-        return server.get_source(self)
+        return bl_camera.get_source(self)
 
     @source.setter
     def source(self, source):
-        server.set_source(self, source)
+        bl_camera.set_source(self, source)
+
+    @property
+    def render_pass(self):
+        return bl_camera.get_render_pass(self)
+
+    @render_pass.setter
+    def render_pass(self, render_pass):
+        bl_camera.set_render_pass(self, render_pass)
+
+    @property
+    def render_engine(self):
+        return bl_camera.get_render_engine(self)
+
+    @render_engine.setter
+    def render_engine(self, render_engine):
+        bl_camera.set_render_engine(self, render_engine)
 
     def render(self):
         '''
@@ -185,10 +260,10 @@ class Camera(Prop):
         :rtype: numpy.ndarray
         '''
         if imread:
-            path = server.render(self, 'exr')
+            path = bl_camera.render(self, 'exr')
             image = imread(path, IMREAD_UNCHANGED)[:, :, ::-1]
         else:
-            path = server.render(self, 'npy')
+            path = bl_camera.render(self, 'npy')
             image = load(path)[::-1, :, :]
         rmtree(dirname(path))
         return image
@@ -233,13 +308,7 @@ class DepthSensor(Camera):
     :param dict \**properties: Initial values of instance variables.
     '''
     def __new__(cls, **properties):
-        return Camera.__new__(
-            cls, source='''#include "stdosl.h"
-            shader depth(output color result = color(0)) {
-              point position_rt_camera = transform("camera", P);
-              result = color(position_rt_camera[2]);
-            }''', **properties
-          )
+        return Camera.__new__(cls, render_pass='z', **properties)
 
 class SurfaceNormalSensor(Camera):
     '''
@@ -248,13 +317,7 @@ class SurfaceNormalSensor(Camera):
     :param dict \**properties: Initial values of instance variables.
     '''
     def __new__(cls, **properties):
-        return Camera.__new__(
-            cls, source='''#include "stdosl.h"
-            shader surface_normal(output color result = color(0)) {
-              normal normal_rt_camera = transform("camera", N);
-              result = color(normal_rt_camera);
-            }''', **properties
-          )
+        return Camera.__new__(cls, render_pass='normal', **properties)
 
 class VelocitySensor(Camera):
     '''
@@ -263,10 +326,4 @@ class VelocitySensor(Camera):
     :param dict \**properties: Initial values of instance variables.
     '''
     def __new__(cls, **properties):
-        return Camera.__new__(
-            cls, source='''#include "stdosl.h"
-            shader optical_flow(output color result = color(0)) {
-              vector velocity_rt_camera = transform("camera", dPdtime);
-              result = color(velocity_rt_camera);
-            }''', **properties
-          )
+        return Camera.__new__(cls, render_pass='vector', **properties)

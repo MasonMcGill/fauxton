@@ -3,10 +3,11 @@
 
     guide
     api
-    example_1
-    example_2
-    example_3
-    example_4
+    read_scene_and_render
+    communicate_with_blender
+    build_scene_and_render
+    write_scene
+    animate_scene
 
 Fauxton
 =======
@@ -42,7 +43,8 @@ Documentation
 
 Examples
 --------
-- :doc:`Rendering <example_1>`
-- :doc:`Blender Interoperation <example_2>`
-- :doc:`Scene Building <example_3>`
-- :doc:`Serialization <example_4>`
+- :doc:`Rendering <read_scene_and_render>`
+- :doc:`Blender Interoperation <communicate_with_blender>`
+- :doc:`Scene Building <build_scene_and_render>`
+- :doc:`Serialization <write_scene>`
+- :doc:`Animation <animate_scene>`

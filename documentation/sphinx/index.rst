@@ -7,6 +7,7 @@
     communicate_with_blender
     build_scene_and_render
     write_scene
+    animate_scene
 
 Fauxton
 =======
@@ -46,3 +47,4 @@ Examples
 - :doc:`Blender Interoperation <communicate_with_blender>`
 - :doc:`Scene Building <build_scene_and_render>`
 - :doc:`Serialization <write_scene>`
+- :doc:`Animation <animate_scene>`

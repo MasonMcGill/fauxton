@@ -15,6 +15,7 @@ Overview
     disable_blender_gc
     collect_blender_garbage
     Prop
+    Action
     Scene
     read_scene
     write_scene
@@ -35,6 +36,7 @@ Blender Interoperation
 Scene Manipulation
 ------------------
 .. autoclass:: Prop(data=None, **properties)
+.. autoclass:: Action(**properties)
 .. autoclass:: Scene(**properties)
 .. autofunction:: read_scene
 .. autofunction:: write_scene

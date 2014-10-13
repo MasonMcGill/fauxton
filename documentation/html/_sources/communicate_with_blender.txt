@@ -13,8 +13,8 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
 
     addition = BlenderModule('''
         def add(a, b):
-            return a + b
-    ''')
+        return a + b
+      ''')
 
     assert addition.add(3, 5) == 8
 
@@ -24,17 +24,17 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
 
     curves = BlenderModule('''
         def create_curve():
-            return bpy.data.curves.new('', 'CURVE')
+        return bpy.data.curves.new('', 'CURVE')
 
         def set_bevel_depth(curve, depth):
             curve.bevel_depth = depth
 
         def get_bevel_depth(curve):
             return curve.bevel_depth
-    ''')
+      ''')
 
     curve = curves.create_curve()
-    assert curve.__class__ == BlenderResource
+    assert type(curve) is BlenderResource
 
     curves.set_bevel_depth(curve, 3)
     assert curves.get_bevel_depth(curve) == 3
@@ -54,15 +54,15 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
 
         def get_color(lamp):
             return list(lamp.color)
-    ''')
+      ''')
 
     class Lamp(BlenderResource):
-        blender_type = 'Lamp'
+        resource_type = 'Lamp'
         color = property(lamps.get_color, lamps.set_color)
-        __new__ = lambda t: lamps.create_lamp(t.blender_type)
+        __new__ = lambda t: lamps.create_lamp(t.resource_type)
 
     lamp = Lamp()
-    assert lamp.__class__ == Lamp
+    assert type(lamp) is Lamp
 
     lamp.color = [0, 0, 1]
     assert lamp.color == [0, 0, 1]
@@ -79,7 +79,7 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
 
         def pop():
             return lamps.pop()
-    ''')
+      ''')
 
     class BlueLamp(Lamp):
         def __new__(cls):
@@ -88,7 +88,7 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
             return result
 
     lamp_storage.push(Lamp())
-    assert lamp_storage.pop().__class__ == Lamp
+    assert type(lamp_storage.pop()) is Lamp
 
     lamp_storage.push(BlueLamp())
-    assert lamp_storage.pop().__class__ == BlueLamp
+    assert type(lamp_storage.pop()) is BlueLamp

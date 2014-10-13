@@ -29,7 +29,8 @@
 
   
     <link rel="top" title="Fauxton  documentation" href="index.html"/>
-        <link rel="prev" title="Example: Blender Interoperation" href="example_2.html"/> 
+        <link rel="next" title="Example: Serialization" href="write_scene.html"/>
+        <link rel="prev" title="Example: Blender Interoperation" href="communicate_with_blender.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -73,9 +74,11 @@
 <li class="toctree-l2"><a class="reference internal" href="api.html#cameras">Cameras</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="example_1.html">Example: Rendering</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_2.html">Example: Blender Interoperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_scene_and_render.html">Example: Rendering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicate_with_blender.html">Example: Blender Interoperation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Example: Scene Building</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_scene.html">Example: Serialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animate_scene.html">Example: Animation</a></li>
 </ul>
 
         
@@ -102,7 +105,7 @@
     <li>Example: Scene Building</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/example_3.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/build_scene_and_render.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -115,7 +118,7 @@
 <p>The following script constructs a scene from scratch and renders consecutive frames while moving the camera:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sin</span>
-<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">axis</span><span class="p">,</span> <span class="n">draw</span><span class="p">,</span> <span class="n">imshow</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">title</span>
+<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">imshow</span>
 <span class="kn">from</span> <span class="nn">fauxton</span> <span class="kn">import</span> <span class="n">BlenderModule</span><span class="p">,</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">Scene</span>
 
 <span class="c">#===============================================================================</span>
@@ -132,8 +135,9 @@
 <span class="s">    def make_point_light(color):</span>
 <span class="s">        point_light = bpy.data.objects.new(&#39;&#39;, bpy.data.lamps.new(&#39;&#39;, &#39;POINT&#39;))</span>
 <span class="s">        point_light.data.color = color</span>
+<span class="s">        point_light.data.energy = 0.75</span>
 <span class="s">        return point_light</span>
-<span class="s">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s">  &#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="c">#===============================================================================</span>
 <span class="c"># Scene Building</span>
@@ -169,17 +173,17 @@
 <span class="c">#===============================================================================</span>
 
 <span class="n">plot</span> <span class="o">=</span> <span class="n">imshow</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])</span>
-<span class="n">title</span><span class="p">(</span><span class="s">&#39;Custom Scene&#39;</span><span class="p">)</span>
-<span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
-<span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;Custom Scene&#39;</span><span class="p">)</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
     <span class="n">plot</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">render_frame</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
-    <span class="n">draw</span><span class="p">()</span>
+    <span class="n">plot</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
-<a class="reference internal image-reference" href="_images/example_3.png"><img alt="_images/example_3.png" class="align-center" src="_images/example_3.png" style="width: 368.25px; height: 383.25px;" /></a>
+<a class="reference internal image-reference" href="_images/build_scene_and_render.png"><img alt="_images/build_scene_and_render.png" class="align-center" src="_images/build_scene_and_render.png" style="width: 337.5px; height: 337.5px;" /></a>
 </div>
 
 
@@ -188,8 +192,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="write_scene.html" class="btn btn-neutral float-right" title="Example: Serialization"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="example_2.html" class="btn btn-neutral" title="Example: Blender Interoperation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="communicate_with_blender.html" class="btn btn-neutral" title="Example: Blender Interoperation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
