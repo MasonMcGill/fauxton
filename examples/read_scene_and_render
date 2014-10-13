@@ -4,6 +4,7 @@ from os.path import dirname, join
 path.append(join(dirname(__file__), '..'))
 
 from matplotlib.pyplot import axis, imshow, show, subplot, title
+from numpy import amax, amin, minimum
 from fauxton import DepthSensor, SurfaceNormalSensor, read_scene
 
 #===============================================================================
@@ -26,8 +27,9 @@ depth_image = depth_sensor.render()
 #===============================================================================
 
 def show_scaled(image, plot_name):
-    image -= image.min()
-    image /= image.max()
+    image = minimum(image, 10)
+    image -= amin(image)
+    image /= amax(image)
     title(plot_name)
     axis('off')
     imshow(image)

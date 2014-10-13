@@ -7,6 +7,7 @@ The following script reads an existing scene from :download:`a ".blend" file <sc
     #!/usr/bin/env python
     from os.path import dirname, join
     from matplotlib.pyplot import axis, imshow, show, subplot, title
+    from numpy import amax, amin, minimum
     from fauxton import DepthSensor, SurfaceNormalSensor, read_scene
 
     #===============================================================================
@@ -28,19 +29,20 @@ The following script reads an existing scene from :download:`a ".blend" file <sc
     # Visualization
     #===============================================================================
 
-    def show_normalized(image, plot_name):
-        image -= image.min()
-        image /= image.max()
-        title(plot_name)
-        axis('off')
-        imshow(image)
+    def show_scaled(image, plot_name):
+        image = minimum(image, 10)
+	image -= amin(image)
+	image /= amax(image)
+	title(plot_name)
+	axis('off')
+	imshow(image)
 
-    subplot(1, 3, 1); show_normalized(optical_image, 'Optical Image')
-    subplot(1, 3, 2); show_normalized(normal_image, 'Surface Normals')
-    subplot(1, 3, 3); show_normalized(depth_image, 'Depth')
+    subplot(1, 3, 1); show_scaled(optical_image, 'Optical Image')
+    subplot(1, 3, 2); show_scaled(normal_image, 'Surface Normals')
+    subplot(1, 3, 3); show_scaled(depth_image, 'Depth')
     show()
 
 **Output**:
 
-.. image:: example_1.png
+.. image:: read_scene_and_render.png
     :align: center

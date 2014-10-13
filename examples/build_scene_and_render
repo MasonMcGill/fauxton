@@ -4,7 +4,7 @@ from os.path import dirname, join
 path.append(join(dirname(__file__), '..'))
 
 from numpy import cos, pi, sin
-from matplotlib.pyplot import axis, draw, imshow, show, title
+from matplotlib.pyplot import imshow
 from fauxton import BlenderModule, Camera, Scene
 
 #===============================================================================
@@ -58,10 +58,10 @@ def render_frame(t):
 #===============================================================================
 
 plot = imshow([[0]])
-title('Custom Scene')
-axis('off')
-show(block=False)
+plot.axes.set_title('Custom Scene')
+plot.axes.set_axis_off()
+plot.figure.show()
 
-for t in range(128):
+for t in range(100):
     plot.set_data(render_frame(t))
-    draw()
+    plot.figure.canvas.draw()
