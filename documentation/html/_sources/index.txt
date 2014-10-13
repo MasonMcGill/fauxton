@@ -8,6 +8,7 @@
     build_scene
     write_scene
     animate_scene
+    use_osl
 
 Fauxton
 =======
@@ -48,3 +49,4 @@ Examples
 - :doc:`Scene Building <build_scene>`
 - :doc:`Serialization <write_scene>`
 - :doc:`Animation <animate_scene>`
+- :doc:`Using OSL <use_osl>`

@@ -260,14 +260,11 @@ class Action(BlenderResource):
     '''
     A keyframe-based animation that can be applied to a ``Prop``.
 
-    :param BlenderResource data: Resource to wrap.
     :param dict \**properties: Initial values of instance variables.
 
-    :var numpy.ndarray position: 3D spatial location.
-    :var numpy.ndarray rotation: 4D rotation quaternion.
-    :var numpy.ndarray scale: 3D scale--1 component for each object-space axis.
-    :var tuple pose: `(position, rotation, scale)`.
-    :var Action action: Animation currently being performed.
+    :var numpy.ndarray position: Sequence of (t, x, y, z) keypoints.
+    :var numpy.ndarray rotation: Sequence of (t, w, x, y, z) keypoints.
+    :var numpy.ndarray scale: Sequence of (t, x, y, z) keypoints.
     '''
     resource_type = 'Action'
 

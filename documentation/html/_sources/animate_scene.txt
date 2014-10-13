@@ -1,6 +1,6 @@
 Example: Animation
 ==================
-The following script reads a scene from a file, shifts and rotates a prop within that scene, and displays the resulting video.
+The following script reads a scene from :download:`a ".blend" file <scene.blend>`, shifts and rotates a prop within that scene, and displays the resulting video:
 
 ::
 
