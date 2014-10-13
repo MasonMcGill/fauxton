@@ -1,8 +1,6 @@
 Example: Scene Building
 =======================
-The following script constructs a scene from scratch and renders consecutive frames while moving the camera:
-
-::
+The following script constructs a scene from scratch and renders consecutive frames while moving the camera::
 
     #!/usr/bin/env python
     from numpy import cos, pi, sin

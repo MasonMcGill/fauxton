@@ -1,8 +1,6 @@
 Example: Rendering
 ==================
-The following script reads an existing scene from :download:`a ".blend" file <scene.blend>` and renders 3 versions of the same image: an optical image, a surface normal map, and a depth map:
-
-::
+The following script reads an existing scene from :download:`a ".blend" file <scene.blend>` and renders 3 versions of the same image: an optical image, a surface normal map, and a depth map::
 
     #!/usr/bin/env python
     from os.path import dirname, join

@@ -1,8 +1,6 @@
 Example: Blender Interoperation
 ===============================
-To enable scene manipulation and rendering, Fauxton runs an instance of Blender in a background process. The following script demonstrates communication with this Blender instance via remote procedure calling:
-
-::
+To enable scene manipulation and rendering, Fauxton runs an instance of Blender in a background process. The following script demonstrates communication with this Blender instance via remote procedure calling::
 
     #!/usr/bin/env python
     from fauxton import BlenderModule, BlenderResource

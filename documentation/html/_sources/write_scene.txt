@@ -1,8 +1,6 @@
 Example: Serialization
 ======================
-The following script constructs a scene, writes it to a file, reads it back into memory, and verifies that its structure has been preserved.
-
-::
+The following script constructs a scene, writes it to a file, reads it back into memory, and verifies that its structure has been preserved::
 
     #!/usr/bin/env python
     from os.path import join

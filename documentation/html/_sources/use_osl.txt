@@ -1,8 +1,6 @@
 Example: Using OSL
 ==================
-The following script reads an existing scene from :download:`a ".blend" file <scene.blend>`, modifies a camera in that scene to use an OSL shader, and renders the image it captures:
-
-::
+The following script reads an existing scene from :download:`a ".blend" file <scene.blend>`, modifies a camera in that scene to use an OSL shader, and renders the image it captures::
 
     #!/usr/bin/env python
     from os.path import dirname, join
@@ -33,4 +31,5 @@ The following script reads an existing scene from :download:`a ".blend" file <sc
 **Output**:
 
 .. image:: use_osl.png
+    :scale: 75%
     :align: center
