@@ -93,17 +93,17 @@ bl_camera = BlenderModule('''
     @contextmanager
     def use_render_pass(scene, render_pass_name):
         if render_pass_name is not None:
-            layer = scene.render.layers[0]
+            scene_use_nodes = scene.use_nodes
+            scene.use_nodes = True
             nodes = scene.node_tree.nodes
             links = scene.node_tree.links
+            layer = scene.render.layers[0]
             passes = [a for a in dir(layer) if a.startswith('use_pass_')]
             scene_enabled_passes = [p for p in passes if getattr(layer, p)]
             scene_node_links = save_links(links)
-            scene_use_nodes = scene.use_nodes
 
             for p in passes: setattr(layer, p, False)
             setattr(layer, 'use_pass_' + render_pass_name, True)
-            scene.use_nodes = True
             links.clear()
             is_composite = lambda n: n.bl_idname == 'CompositorNodeComposite'
             src_node = nodes.new('CompositorNodeRLayers')
