@@ -122,6 +122,15 @@ bl_camera = BlenderModule('''
             load_links(links, scene_node_links)
             scene.use_nodes = scene_use_nodes
 
+    @contextmanager
+    def use_render_engine(scene, render_engine_name):
+        if render_engine_name is not None:
+            scene_render_engine = scene.render.engine
+            scene.render.engine = render_engine_name
+        yield
+        if render_engine_name is not None:
+            scene.render.engine = scene_render_engine
+
     def create(type_):
         camera = bpy.data.objects.new('', bpy.data.cameras.new(''))
         camera['__type__'] = type_
@@ -157,7 +166,7 @@ bl_camera = BlenderModule('''
         camera['render_pass'] = render_pass
 
     def get_render_engine(camera):
-        return camera.get('render_engine', 'BLENDER_RENDER')
+        return camera.get('render_engine', None)
 
     def set_render_engine(camera, render_engine):
         camera['render_engine'] = render_engine
@@ -170,15 +179,14 @@ bl_camera = BlenderModule('''
         scene.camera = camera
         scene.render.filepath = path
         scene.render.image_settings.file_format = 'OPEN_EXR'
-        scene.render.engine = get_render_engine(camera)
-        scene.render.layers['RenderLayer'].use_pass_vector = True
         scene.render.resolution_y = 2 * get_resolution(camera)[0]
         scene.render.resolution_x = 2 * get_resolution(camera)[1]
         bpy.context.screen.scene = scene
 
         with use_material(scene, camera.get('material_name', None)):
-            with use_render_pass(scene, get_render_pass(camera)):
-                bpy.ops.render.render(write_still=True)
+            with use_render_engine(scene, get_render_engine(camera)):
+                with use_render_pass(scene, get_render_pass(camera)):
+                    bpy.ops.render.render(write_still=True)
 
         if format == 'exr':
             return path
@@ -261,10 +269,10 @@ class Camera(Prop):
         '''
         if imread:
             path = bl_camera.render(self, 'exr')
-            image = imread(path, IMREAD_UNCHANGED)[:, :, ::-1]
+            image = imread(path, IMREAD_UNCHANGED)[..., ::-1]
         else:
             path = bl_camera.render(self, 'npy')
-            image = load(path)[::-1, :, :]
+            image = load(path)
         rmtree(dirname(path))
         return image
 

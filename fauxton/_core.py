@@ -1,8 +1,9 @@
 from atexit import register as at_exit
 from os import devnull
-from os.path import exists, join
+from os.path import exists, join, isfile
 from shutil import rmtree
 from subprocess import Popen
+from sys import platform
 from tempfile import mkdtemp
 from time import sleep
 from weakref import WeakKeyDictionary, WeakValueDictionary
@@ -211,9 +212,12 @@ while active:
 '''
 
 def start_server():
+    blender_paths = ['/Applcations/blender.app/Contents/MacOS/blender',
+                     '/Applcations/Blender.app/Contents/MacOS/blender']
     base = mkdtemp()
     with open(join(base, 'server.py'), 'w+') as f: f.write(SERVER_SOURCE)
-    command = ['blender', '-b', '-P', join(base, 'server.py')]
+    blender_path = next(iter(filter(isfile, blender_paths)), 'blender')
+    command = [blender_path, '-b', '-P', join(base, 'server.py')]
     Popen(command, stdout=open(devnull, 'w'), stderr=open(devnull, 'w'))
     while not exists(join(base, 'lock.txt')): sleep(.001)
     with open(join(base, 'port.txt')) as f: port = f.read()
