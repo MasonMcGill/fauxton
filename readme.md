@@ -13,7 +13,7 @@ Fauxton depends on [Blender 2.71+](http://www.blender.org/download/) and [NumPy]
     sudo apt-get update
     sudo apt-get install blender python-numpy python-opencv
 
-To install them on **OS X**, manually install Blender, making sure to move *blender.app* into */Applications*. The rest of the dependencies can be installed with [Homebrew](http://brew.sh/):
+To install them on **OS X**, manually install Blender, making sure to move `blender.app` into `/Applications`. The rest of the dependencies can be installed with [Homebrew](http://brew.sh/):
 
     brew tap homebrew/science
     brew install numpy
