@@ -25,4 +25,4 @@ Fauxton itself can be installed from the Python package index:
 
 Documentation
 -------------
-Examples and API documentation can be accessed by opening *documentation/html/index.html*.
+Examples and API documentation can be accessed by opening `documentation/html/index.html`.
