@@ -1,3 +1,4 @@
+.pypirc
 MANIFEST
 documentation/html/*
 dist/*
