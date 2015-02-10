@@ -101,7 +101,6 @@ bl_camera = BlenderModule('''
             passes = [a for a in dir(layer) if a.startswith('use_pass_')]
             scene_enabled_passes = [p for p in passes if getattr(layer, p)]
             scene_node_links = save_links(links)
-
             for p in passes: setattr(layer, p, False)
             setattr(layer, 'use_pass_' + render_pass_name, True)
             links.clear()
@@ -112,9 +111,7 @@ bl_camera = BlenderModule('''
             src_socket = next(s for s in src_node.outputs if s.enabled)
             snk_socket = snk_node.inputs['Image']
             links.new(src_socket, snk_socket)
-
         yield
-
         if render_pass_name is not None:
             nodes.remove(src_node)
             setattr(layer, 'use_pass_' + render_pass_name, False)
@@ -183,9 +180,9 @@ bl_camera = BlenderModule('''
         scene.render.resolution_x = 2 * get_resolution(camera)[1]
         bpy.context.screen.scene = scene
 
-        with use_material(scene, camera.get('material_name', None)):
-            with use_render_engine(scene, get_render_engine(camera)):
-                with use_render_pass(scene, get_render_pass(camera)):
+        with use_render_engine(scene, get_render_engine(camera)):
+            with use_render_pass(scene, get_render_pass(camera)):
+                with use_material(scene, camera.get('material_name', None)):
                     bpy.ops.render.render(write_still=True)
 
         if format == 'exr':
@@ -272,7 +269,7 @@ class Camera(Prop):
             image = imread(path, IMREAD_UNCHANGED)[..., ::-1]
         else:
             path = bl_camera.render(self, 'npy')
-            image = load(path)
+            image = load(path)[::-1]
         rmtree(dirname(path))
         return image
 
@@ -318,6 +315,14 @@ class DepthSensor(Camera):
     def __new__(cls, **properties):
         return Camera.__new__(cls, render_pass='z', **properties)
 
+    def render(self):
+        '''
+        Return a snapshot of the camera's containing scene.
+
+        :rtype: numpy.ndarray
+        '''
+        return Camera.render(self)[:, :, 0]
+
 class SurfaceNormalSensor(Camera):
     '''
     A camera that reports the surface normal at each pixel.
@@ -327,6 +332,14 @@ class SurfaceNormalSensor(Camera):
     def __new__(cls, **properties):
         return Camera.__new__(cls, render_pass='normal', **properties)
 
+    def render(self):
+        '''
+        Return a snapshot of the camera's containing scene.
+
+        :rtype: numpy.ndarray
+        '''
+        return Camera.render(self)[:, :, 0:3]
+
 class VelocitySensor(Camera):
     '''
     A camera that reports the velocity at each pixel.
@@ -335,3 +348,11 @@ class VelocitySensor(Camera):
     '''
     def __new__(cls, **properties):
         return Camera.__new__(cls, render_pass='vector', **properties)
+
+    def render(self):
+        '''
+        Return a snapshot of the camera's containing scene.
+
+        :rtype: numpy.ndarray
+        '''
+        return Camera.render(self)[:, :, 0:3]
