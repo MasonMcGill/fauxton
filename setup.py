@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(name='fauxton',
       packages=['fauxton'],
-      version='0.1',
+      version='0.1.1',
       description=('Computer graphics technology for computer vision'
                    ' applications.'),
       author='Mason McGill',
