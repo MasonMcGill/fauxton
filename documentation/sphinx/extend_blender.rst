@@ -11,7 +11,7 @@ To enable scene manipulation and rendering, Fauxton runs an instance of Blender 
 
     addition = BlenderModule('''
         def add(a, b):
-        return a + b
+            return a + b
       ''')
 
     assert addition.add(3, 5) == 8
