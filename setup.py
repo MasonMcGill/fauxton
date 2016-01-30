@@ -10,4 +10,5 @@ setup(name='fauxton',
       url='https://github.com/MasonMcGill/fauxton',
       download_url='https://github.com/MasonMcGill/fauxton/tarball/0.1',
       keywords=['vision', 'graphics', 'blender'],
+      install_requires=['numpy'],
       classifiers=[])
